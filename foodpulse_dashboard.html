@@ -1,0 +1,3543 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FOODPULSE Analytics - Food Delivery Intelligence</title>
+  <!-- Tailwind CSS -->
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0B0F19;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1E293B;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+    .glow-card {
+      transition: all 0.2s ease-in-out;
+    }
+    .glow-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.08);
+    }
+  </style>
+</head>
+<body class="bg-[#090D16] text-slate-100 antialiased min-h-screen flex flex-col md:flex-row overflow-x-hidden">
+
+  <!-- Left Sidebar -->
+  <aside class="w-full md:w-64 bg-[#0B0F19] border-r border-slate-800 flex flex-col shrink-0 select-none">
+    <!-- Brand Header -->
+    <div class="p-5 border-b border-slate-800/80 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/20 text-white font-black text-xl">
+          🔥
+        </div>
+        <div>
+          <div class="flex items-center space-x-1.5">
+            <span class="font-extrabold text-lg tracking-tight text-white">FOOD<span class="text-orange-500">PULSE</span></span>
+            <span class="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-orange-500/10 text-orange-400 border border-orange-500/20">SaaS</span>
+          </div>
+          <p class="text-xs text-slate-400">Delivery Intelligence</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Database Context Badge -->
+    <div class="mx-4 my-4 p-3 rounded-lg bg-slate-900/90 border border-slate-800 text-xs">
+      <div class="flex items-center space-x-2 text-slate-300 font-medium mb-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>Connected Database</span>
+      </div>
+      <div class="flex items-center justify-between text-slate-400">
+        <span class="font-mono text-[11px] text-orange-400 font-semibold">fooddeliverydb</span>
+        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          5,000 Orders
+        </span>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 px-3 space-y-1">
+      <div class="px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+        Analytics & Modules
+      </div>
+      <button onclick="switchTab('overview')" id="btn-overview" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all bg-gradient-to-r from-orange-600/20 to-orange-500/10 text-orange-400 border border-orange-500/30">
+        <div class="flex items-center space-x-3">
+          <span>📊</span>
+          <span>Executive Overview</span>
+        </div>
+        <span class="text-[10px] px-1.5 py-0.5 rounded font-mono bg-orange-500/20 text-orange-300">KPIs</span>
+      </button>
+
+      <button onclick="switchTab('trends')" id="btn-trends" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 border border-transparent">
+        <div class="flex items-center space-x-3">
+          <span>📈</span>
+          <span>Revenue & Trends</span>
+        </div>
+        <span class="text-[10px] px-1.5 py-0.5 rounded font-mono bg-slate-800/80 text-slate-400">Monthly</span>
+      </button>
+
+      <button onclick="switchTab('restaurants')" id="btn-restaurants" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 border border-transparent">
+        <div class="flex items-center space-x-3">
+          <span>🍽️</span>
+          <span>Restaurants & Cuisines</span>
+        </div>
+        <span class="text-[10px] px-1.5 py-0.5 rounded font-mono bg-slate-800/80 text-slate-400">50 Outlets</span>
+      </button>
+
+      <button onclick="switchTab('customers')" id="btn-customers" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 border border-transparent">
+        <div class="flex items-center space-x-3">
+          <span>👥</span>
+          <span>Customer Intelligence</span>
+        </div>
+        <span class="text-[10px] px-1.5 py-0.5 rounded font-mono bg-slate-800/80 text-slate-400">RFM</span>
+      </button>
+
+      <button onclick="switchTab('operations')" id="btn-operations" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 border border-transparent">
+        <div class="flex items-center space-x-3">
+          <span>⏱️</span>
+          <span>Operations & Hours</span>
+        </div>
+        <span class="text-[10px] px-1.5 py-0.5 rounded font-mono bg-slate-800/80 text-slate-400">Peak Times</span>
+      </button>
+
+      <button onclick="switchTab('sql')" id="btn-sql" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 border border-transparent">
+        <div class="flex items-center space-x-3">
+          <span>⚡</span>
+          <span>SQL Query Inspector</span>
+        </div>
+        <span class="text-[10px] px-1.5 py-0.5 rounded font-mono bg-slate-800/80 text-slate-400">MySQL</span>
+      </button>
+    </nav>
+
+    <!-- Footer Stats -->
+    <div class="p-4 border-t border-slate-800 text-xs text-slate-400 space-y-2">
+      <div class="flex items-center justify-between">
+        <span>Time Window</span>
+        <span class="text-slate-300 font-mono text-[11px]">Jan - Jun 2025</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <span>Total Outlets</span>
+        <span class="text-slate-300 font-mono text-[11px]">50 Restaurants</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <span>Active Cities</span>
+        <span class="text-slate-300 font-mono text-[11px]">5 Metros</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content View -->
+  <div class="flex-1 flex flex-col min-w-0 bg-[#090D16]">
+    <!-- Top Bar -->
+    <header class="bg-[#0B0F19]/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-30 px-6 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <div class="flex items-center space-x-2.5">
+          <h1 id="header-title" class="text-xl font-bold text-white tracking-tight">Executive Overview</h1>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            Live DB Sync
+          </span>
+        </div>
+        <p id="header-subtitle" class="text-xs text-slate-400 mt-0.5">Macro food delivery operational performance & KPI health</p>
+      </div>
+
+      <div class="flex items-center flex-wrap gap-3">
+        <div class="relative">
+          <input
+            id="global-search"
+            type="text"
+            placeholder="Search restaurants, cuisines, cities..."
+            oninput="handleGlobalSearch(this.value)"
+            class="w-64 pl-8 pr-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-400 focus:outline-none focus:border-orange-500/50 transition-all"
+          />
+          <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">🔍</span>
+        </div>
+
+        <div class="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-300 font-medium">
+          <span class="text-orange-400">📅</span>
+          <span class="font-mono text-[11px]">Jan 2025 – Jun 2025</span>
+        </div>
+
+        <button onclick="alert('Database sync active: 5,000 orders refreshed from fooddeliverydb!')" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-xl text-xs text-slate-300 hover:text-white transition-all flex items-center gap-1.5">
+          <span>🔄</span>
+          <span>Refresh</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Dynamic Body -->
+    <main id="tab-content" class="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
+      <!-- Injected via JavaScript -->
+    </main>
+  </div>
+
+  <script>
+    const DATA = {
+  "metadata": {
+    "database": "fooddeliverydb",
+    "period": "Jan 2025 - Jun 2025",
+    "generated_for": "FOODPULSE SaaS Analytics Dashboard"
+  },
+  "executive_kpis": {
+    "total_orders": 5000,
+    "total_revenue": 4097103.31,
+    "average_order_value": 819.42,
+    "highest_order_value": 1499.03,
+    "lowest_order_value": 150.29,
+    "total_customers": 500,
+    "total_restaurants": 50,
+    "revenue_per_customer": 8194.21,
+    "repeat_customer_percentage": 100.0,
+    "overall_average_rating": 3.76,
+    "top_restaurant": {
+      "id": 118,
+      "name": "KFC 118",
+      "cuisine": "Fast Food",
+      "revenue": 106094.61,
+      "orders": 121,
+      "rating": 3.82
+    },
+    "top_cuisine": {
+      "name": "Italian",
+      "revenue": 810201.74,
+      "share": 19.77
+    },
+    "top_city": {
+      "name": "Chennai",
+      "revenue": 935205.19,
+      "customers": 109,
+      "share": 22.83
+    }
+  },
+  "monthly_performance": [
+    {
+      "YearMonth": "2025-01",
+      "MonthName": "Jan",
+      "orders": 831,
+      "revenue": 698967.62,
+      "aov": 841.12,
+      "growth_percentage": 0.0
+    },
+    {
+      "YearMonth": "2025-02",
+      "MonthName": "Feb",
+      "orders": 752,
+      "revenue": 611344.28,
+      "aov": 812.96,
+      "growth_percentage": -12.54
+    },
+    {
+      "YearMonth": "2025-03",
+      "MonthName": "Mar",
+      "orders": 808,
+      "revenue": 667149.17,
+      "aov": 825.68,
+      "growth_percentage": 9.13
+    },
+    {
+      "YearMonth": "2025-04",
+      "MonthName": "Apr",
+      "orders": 835,
+      "revenue": 679911.11,
+      "aov": 814.26,
+      "growth_percentage": 1.91
+    },
+    {
+      "YearMonth": "2025-05",
+      "MonthName": "May",
+      "orders": 890,
+      "revenue": 728352.81,
+      "aov": 818.37,
+      "growth_percentage": 7.12
+    },
+    {
+      "YearMonth": "2025-06",
+      "MonthName": "Jun",
+      "orders": 884,
+      "revenue": 711378.32,
+      "aov": 804.73,
+      "growth_percentage": -2.33
+    }
+  ],
+  "daily_cumulative_sample": [
+    {
+      "date": "2025-01-01",
+      "revenue": 19197.75,
+      "orders": 23,
+      "cumulative_revenue": 19197.75
+    },
+    {
+      "date": "2025-01-03",
+      "revenue": 22617.89,
+      "orders": 25,
+      "cumulative_revenue": 65464.56
+    },
+    {
+      "date": "2025-01-05",
+      "revenue": 20675.99,
+      "orders": 28,
+      "cumulative_revenue": 103839.36
+    },
+    {
+      "date": "2025-01-07",
+      "revenue": 15027.94,
+      "orders": 20,
+      "cumulative_revenue": 139695.9
+    },
+    {
+      "date": "2025-01-09",
+      "revenue": 22965.3,
+      "orders": 25,
+      "cumulative_revenue": 180322.1
+    },
+    {
+      "date": "2025-01-11",
+      "revenue": 20049.08,
+      "orders": 28,
+      "cumulative_revenue": 219026.07
+    },
+    {
+      "date": "2025-01-13",
+      "revenue": 17380.86,
+      "orders": 22,
+      "cumulative_revenue": 262492.35
+    },
+    {
+      "date": "2025-01-15",
+      "revenue": 24232.98,
+      "orders": 26,
+      "cumulative_revenue": 318613.12
+    },
+    {
+      "date": "2025-01-17",
+      "revenue": 24213.46,
+      "orders": 28,
+      "cumulative_revenue": 365155.03
+    },
+    {
+      "date": "2025-01-19",
+      "revenue": 18555.85,
+      "orders": 23,
+      "cumulative_revenue": 401291.6
+    },
+    {
+      "date": "2025-01-21",
+      "revenue": 19979.53,
+      "orders": 24,
+      "cumulative_revenue": 444877.33
+    },
+    {
+      "date": "2025-01-23",
+      "revenue": 29351.12,
+      "orders": 33,
+      "cumulative_revenue": 503032.93
+    },
+    {
+      "date": "2025-01-25",
+      "revenue": 23899.81,
+      "orders": 27,
+      "cumulative_revenue": 557082.45
+    },
+    {
+      "date": "2025-01-27",
+      "revenue": 18479.38,
+      "orders": 25,
+      "cumulative_revenue": 605042.83
+    },
+    {
+      "date": "2025-01-29",
+      "revenue": 20898.12,
+      "orders": 26,
+      "cumulative_revenue": 649269.32
+    },
+    {
+      "date": "2025-01-31",
+      "revenue": 27708.57,
+      "orders": 37,
+      "cumulative_revenue": 698967.62
+    },
+    {
+      "date": "2025-02-02",
+      "revenue": 17393.18,
+      "orders": 23,
+      "cumulative_revenue": 731821.42
+    },
+    {
+      "date": "2025-02-04",
+      "revenue": 24940.76,
+      "orders": 29,
+      "cumulative_revenue": 778103.89
+    },
+    {
+      "date": "2025-02-06",
+      "revenue": 24947.08,
+      "orders": 30,
+      "cumulative_revenue": 828149.12
+    },
+    {
+      "date": "2025-02-08",
+      "revenue": 20970.47,
+      "orders": 25,
+      "cumulative_revenue": 879807.79
+    },
+    {
+      "date": "2025-02-10",
+      "revenue": 25665.33,
+      "orders": 29,
+      "cumulative_revenue": 922216.25
+    },
+    {
+      "date": "2025-02-12",
+      "revenue": 21298.95,
+      "orders": 25,
+      "cumulative_revenue": 968814.88
+    },
+    {
+      "date": "2025-02-14",
+      "revenue": 24483.57,
+      "orders": 30,
+      "cumulative_revenue": 1010996.85
+    },
+    {
+      "date": "2025-02-16",
+      "revenue": 26829.0,
+      "orders": 30,
+      "cumulative_revenue": 1066669.98
+    },
+    {
+      "date": "2025-02-18",
+      "revenue": 26088.41,
+      "orders": 31,
+      "cumulative_revenue": 1109712.61
+    },
+    {
+      "date": "2025-02-20",
+      "revenue": 16436.14,
+      "orders": 18,
+      "cumulative_revenue": 1150607.17
+    },
+    {
+      "date": "2025-02-22",
+      "revenue": 20565.24,
+      "orders": 27,
+      "cumulative_revenue": 1194031.82
+    },
+    {
+      "date": "2025-02-24",
+      "revenue": 19257.86,
+      "orders": 25,
+      "cumulative_revenue": 1232922.51
+    },
+    {
+      "date": "2025-02-26",
+      "revenue": 27036.88,
+      "orders": 35,
+      "cumulative_revenue": 1279078.84
+    },
+    {
+      "date": "2025-02-28",
+      "revenue": 10100.69,
+      "orders": 16,
+      "cumulative_revenue": 1310311.9
+    },
+    {
+      "date": "2025-03-02",
+      "revenue": 19250.95,
+      "orders": 26,
+      "cumulative_revenue": 1347249.54
+    },
+    {
+      "date": "2025-03-04",
+      "revenue": 18672.36,
+      "orders": 17,
+      "cumulative_revenue": 1393117.33
+    },
+    {
+      "date": "2025-03-06",
+      "revenue": 19623.54,
+      "orders": 25,
+      "cumulative_revenue": 1442109.48
+    },
+    {
+      "date": "2025-03-08",
+      "revenue": 18164.66,
+      "orders": 22,
+      "cumulative_revenue": 1480410.25
+    },
+    {
+      "date": "2025-03-10",
+      "revenue": 19144.24,
+      "orders": 25,
+      "cumulative_revenue": 1520964.57
+    },
+    {
+      "date": "2025-03-12",
+      "revenue": 23925.03,
+      "orders": 31,
+      "cumulative_revenue": 1562887.29
+    },
+    {
+      "date": "2025-03-14",
+      "revenue": 25677.91,
+      "orders": 32,
+      "cumulative_revenue": 1614764.11
+    },
+    {
+      "date": "2025-03-16",
+      "revenue": 14524.29,
+      "orders": 18,
+      "cumulative_revenue": 1644145.98
+    },
+    {
+      "date": "2025-03-18",
+      "revenue": 30586.01,
+      "orders": 37,
+      "cumulative_revenue": 1696834.04
+    },
+    {
+      "date": "2025-03-20",
+      "revenue": 22433.92,
+      "orders": 28,
+      "cumulative_revenue": 1749093.02
+    },
+    {
+      "date": "2025-03-22",
+      "revenue": 30530.05,
+      "orders": 39,
+      "cumulative_revenue": 1798840.7
+    },
+    {
+      "date": "2025-03-24",
+      "revenue": 20519.21,
+      "orders": 26,
+      "cumulative_revenue": 1843386.35
+    },
+    {
+      "date": "2025-03-26",
+      "revenue": 20327.24,
+      "orders": 26,
+      "cumulative_revenue": 1887651.75
+    },
+    {
+      "date": "2025-03-28",
+      "revenue": 20706.4,
+      "orders": 26,
+      "cumulative_revenue": 1928101.07
+    },
+    {
+      "date": "2025-03-30",
+      "revenue": 15656.68,
+      "orders": 22,
+      "cumulative_revenue": 1959870.15
+    },
+    {
+      "date": "2025-04-01",
+      "revenue": 16688.04,
+      "orders": 22,
+      "cumulative_revenue": 1994149.11
+    },
+    {
+      "date": "2025-04-03",
+      "revenue": 20169.27,
+      "orders": 31,
+      "cumulative_revenue": 2031564.12
+    },
+    {
+      "date": "2025-04-05",
+      "revenue": 23806.19,
+      "orders": 25,
+      "cumulative_revenue": 2070428.54
+    },
+    {
+      "date": "2025-04-07",
+      "revenue": 27075.33,
+      "orders": 34,
+      "cumulative_revenue": 2124280.0
+    },
+    {
+      "date": "2025-04-09",
+      "revenue": 22078.77,
+      "orders": 29,
+      "cumulative_revenue": 2186153.02
+    },
+    {
+      "date": "2025-04-11",
+      "revenue": 25440.7,
+      "orders": 26,
+      "cumulative_revenue": 2231108.8
+    },
+    {
+      "date": "2025-04-13",
+      "revenue": 22509.34,
+      "orders": 29,
+      "cumulative_revenue": 2278543.71
+    },
+    {
+      "date": "2025-04-15",
+      "revenue": 13216.36,
+      "orders": 17,
+      "cumulative_revenue": 2311133.66
+    },
+    {
+      "date": "2025-04-17",
+      "revenue": 23205.33,
+      "orders": 26,
+      "cumulative_revenue": 2357821.98
+    },
+    {
+      "date": "2025-04-19",
+      "revenue": 23742.75,
+      "orders": 29,
+      "cumulative_revenue": 2400055.44
+    },
+    {
+      "date": "2025-04-21",
+      "revenue": 23373.51,
+      "orders": 27,
+      "cumulative_revenue": 2444022.51
+    },
+    {
+      "date": "2025-04-23",
+      "revenue": 19297.87,
+      "orders": 25,
+      "cumulative_revenue": 2488035.55
+    },
+    {
+      "date": "2025-04-25",
+      "revenue": 19183.24,
+      "orders": 25,
+      "cumulative_revenue": 2538437.72
+    },
+    {
+      "date": "2025-04-27",
+      "revenue": 27157.57,
+      "orders": 32,
+      "cumulative_revenue": 2590176.12
+    },
+    {
+      "date": "2025-04-29",
+      "revenue": 27103.27,
+      "orders": 30,
+      "cumulative_revenue": 2635825.31
+    },
+    {
+      "date": "2025-05-01",
+      "revenue": 23785.94,
+      "orders": 27,
+      "cumulative_revenue": 2681158.12
+    },
+    {
+      "date": "2025-05-03",
+      "revenue": 15194.63,
+      "orders": 19,
+      "cumulative_revenue": 2722418.01
+    },
+    {
+      "date": "2025-05-05",
+      "revenue": 17161.24,
+      "orders": 25,
+      "cumulative_revenue": 2768915.12
+    },
+    {
+      "date": "2025-05-07",
+      "revenue": 22578.38,
+      "orders": 26,
+      "cumulative_revenue": 2824396.39
+    },
+    {
+      "date": "2025-05-09",
+      "revenue": 21445.96,
+      "orders": 21,
+      "cumulative_revenue": 2875546.81
+    },
+    {
+      "date": "2025-05-11",
+      "revenue": 26737.26,
+      "orders": 27,
+      "cumulative_revenue": 2927794.64
+    },
+    {
+      "date": "2025-05-13",
+      "revenue": 13594.46,
+      "orders": 21,
+      "cumulative_revenue": 2959130.6
+    },
+    {
+      "date": "2025-05-15",
+      "revenue": 24794.17,
+      "orders": 27,
+      "cumulative_revenue": 3003860.24
+    },
+    {
+      "date": "2025-05-17",
+      "revenue": 22131.47,
+      "orders": 29,
+      "cumulative_revenue": 3044659.85
+    },
+    {
+      "date": "2025-05-19",
+      "revenue": 22000.51,
+      "orders": 26,
+      "cumulative_revenue": 3097683.91
+    },
+    {
+      "date": "2025-05-21",
+      "revenue": 22137.08,
+      "orders": 25,
+      "cumulative_revenue": 3140951.09
+    },
+    {
+      "date": "2025-05-23",
+      "revenue": 15997.52,
+      "orders": 18,
+      "cumulative_revenue": 3183100.02
+    },
+    {
+      "date": "2025-05-25",
+      "revenue": 24627.43,
+      "orders": 28,
+      "cumulative_revenue": 3229707.16
+    },
+    {
+      "date": "2025-05-27",
+      "revenue": 25330.43,
+      "orders": 31,
+      "cumulative_revenue": 3283870.63
+    },
+    {
+      "date": "2025-05-29",
+      "revenue": 17877.98,
+      "orders": 25,
+      "cumulative_revenue": 3331970.43
+    },
+    {
+      "date": "2025-05-31",
+      "revenue": 29124.34,
+      "orders": 37,
+      "cumulative_revenue": 3385724.99
+    },
+    {
+      "date": "2025-06-02",
+      "revenue": 28764.13,
+      "orders": 35,
+      "cumulative_revenue": 3436583.04
+    },
+    {
+      "date": "2025-06-04",
+      "revenue": 26013.15,
+      "orders": 32,
+      "cumulative_revenue": 3481069.71
+    },
+    {
+      "date": "2025-06-06",
+      "revenue": 14916.99,
+      "orders": 19,
+      "cumulative_revenue": 3513861.31
+    },
+    {
+      "date": "2025-06-08",
+      "revenue": 20616.38,
+      "orders": 25,
+      "cumulative_revenue": 3555770.56
+    },
+    {
+      "date": "2025-06-10",
+      "revenue": 32820.09,
+      "orders": 34,
+      "cumulative_revenue": 3602368.34
+    },
+    {
+      "date": "2025-06-12",
+      "revenue": 24484.19,
+      "orders": 30,
+      "cumulative_revenue": 3648864.61
+    },
+    {
+      "date": "2025-06-14",
+      "revenue": 23179.48,
+      "orders": 27,
+      "cumulative_revenue": 3689141.12
+    },
+    {
+      "date": "2025-06-16",
+      "revenue": 34931.93,
+      "orders": 42,
+      "cumulative_revenue": 3749086.77
+    },
+    {
+      "date": "2025-06-18",
+      "revenue": 41158.6,
+      "orders": 49,
+      "cumulative_revenue": 3813945.5
+    },
+    {
+      "date": "2025-06-20",
+      "revenue": 20433.58,
+      "orders": 22,
+      "cumulative_revenue": 3864686.54
+    },
+    {
+      "date": "2025-06-22",
+      "revenue": 20604.56,
+      "orders": 25,
+      "cumulative_revenue": 3902624.94
+    },
+    {
+      "date": "2025-06-24",
+      "revenue": 18518.31,
+      "orders": 26,
+      "cumulative_revenue": 3952358.53
+    },
+    {
+      "date": "2025-06-26",
+      "revenue": 21525.3,
+      "orders": 30,
+      "cumulative_revenue": 4002497.0
+    },
+    {
+      "date": "2025-06-28",
+      "revenue": 25196.18,
+      "orders": 33,
+      "cumulative_revenue": 4054934.27
+    },
+    {
+      "date": "2025-06-30",
+      "revenue": 19136.49,
+      "orders": 26,
+      "cumulative_revenue": 4097103.31
+    }
+  ],
+  "cuisine_performance": [
+    {
+      "Cuisine": "Italian",
+      "revenue": 810201.74,
+      "orders": 972,
+      "restaurant_count": 10,
+      "avg_rating": 3.78,
+      "aov": 833.54,
+      "revenue_share": 19.77
+    },
+    {
+      "Cuisine": "North Indian",
+      "revenue": 746924.03,
+      "orders": 906,
+      "restaurant_count": 9,
+      "avg_rating": 3.77,
+      "aov": 824.42,
+      "revenue_share": 18.23
+    },
+    {
+      "Cuisine": "Chinese",
+      "revenue": 741007.24,
+      "orders": 903,
+      "restaurant_count": 9,
+      "avg_rating": 3.75,
+      "aov": 820.61,
+      "revenue_share": 18.09
+    },
+    {
+      "Cuisine": "Desserts",
+      "revenue": 631949.16,
+      "orders": 784,
+      "restaurant_count": 8,
+      "avg_rating": 3.72,
+      "aov": 806.06,
+      "revenue_share": 15.42
+    },
+    {
+      "Cuisine": "Biryani",
+      "revenue": 488020.11,
+      "orders": 612,
+      "restaurant_count": 6,
+      "avg_rating": 3.79,
+      "aov": 797.42,
+      "revenue_share": 11.91
+    },
+    {
+      "Cuisine": "Fast Food",
+      "revenue": 357182.84,
+      "orders": 422,
+      "restaurant_count": 4,
+      "avg_rating": 3.76,
+      "aov": 846.4,
+      "revenue_share": 8.72
+    },
+    {
+      "Cuisine": "South Indian",
+      "revenue": 321818.19,
+      "orders": 401,
+      "restaurant_count": 4,
+      "avg_rating": 3.77,
+      "aov": 802.54,
+      "revenue_share": 7.85
+    }
+  ],
+  "day_of_week": [
+    {
+      "DayOfWeek": 0,
+      "day": "Monday",
+      "orders": 703,
+      "revenue": 571996.17,
+      "aov": 813.65
+    },
+    {
+      "DayOfWeek": 1,
+      "day": "Tuesday",
+      "orders": 705,
+      "revenue": 584853.17,
+      "aov": 829.58
+    },
+    {
+      "DayOfWeek": 2,
+      "day": "Wednesday",
+      "orders": 770,
+      "revenue": 628454.56,
+      "aov": 816.17
+    },
+    {
+      "DayOfWeek": 3,
+      "day": "Thursday",
+      "orders": 723,
+      "revenue": 599110.93,
+      "aov": 828.65
+    },
+    {
+      "DayOfWeek": 4,
+      "day": "Friday",
+      "orders": 671,
+      "revenue": 561883.11,
+      "aov": 837.38
+    },
+    {
+      "DayOfWeek": 5,
+      "day": "Saturday",
+      "orders": 706,
+      "revenue": 560418.69,
+      "aov": 793.79
+    },
+    {
+      "DayOfWeek": 6,
+      "day": "Sunday",
+      "orders": 722,
+      "revenue": 590386.68,
+      "aov": 817.71
+    }
+  ],
+  "hourly_distribution": [
+    {
+      "Hour": 10,
+      "hour_label": "10:00",
+      "orders": 351,
+      "revenue": 289969.84,
+      "aov": 826.12
+    },
+    {
+      "Hour": 11,
+      "hour_label": "11:00",
+      "orders": 375,
+      "revenue": 311216.48,
+      "aov": 829.91
+    },
+    {
+      "Hour": 12,
+      "hour_label": "12:00",
+      "orders": 358,
+      "revenue": 291636.97,
+      "aov": 814.63
+    },
+    {
+      "Hour": 13,
+      "hour_label": "13:00",
+      "orders": 350,
+      "revenue": 277204.19,
+      "aov": 792.01
+    },
+    {
+      "Hour": 14,
+      "hour_label": "14:00",
+      "orders": 368,
+      "revenue": 301016.69,
+      "aov": 817.98
+    },
+    {
+      "Hour": 15,
+      "hour_label": "15:00",
+      "orders": 352,
+      "revenue": 294113.2,
+      "aov": 835.55
+    },
+    {
+      "Hour": 16,
+      "hour_label": "16:00",
+      "orders": 370,
+      "revenue": 308861.2,
+      "aov": 834.76
+    },
+    {
+      "Hour": 17,
+      "hour_label": "17:00",
+      "orders": 335,
+      "revenue": 276607.61,
+      "aov": 825.69
+    },
+    {
+      "Hour": 18,
+      "hour_label": "18:00",
+      "orders": 343,
+      "revenue": 280364.72,
+      "aov": 817.39
+    },
+    {
+      "Hour": 19,
+      "hour_label": "19:00",
+      "orders": 367,
+      "revenue": 305768.86,
+      "aov": 833.16
+    },
+    {
+      "Hour": 20,
+      "hour_label": "20:00",
+      "orders": 379,
+      "revenue": 308648.96,
+      "aov": 814.38
+    },
+    {
+      "Hour": 21,
+      "hour_label": "21:00",
+      "orders": 350,
+      "revenue": 282643.03,
+      "aov": 807.55
+    },
+    {
+      "Hour": 22,
+      "hour_label": "22:00",
+      "orders": 361,
+      "revenue": 285235.26,
+      "aov": 790.13
+    },
+    {
+      "Hour": 23,
+      "hour_label": "23:00",
+      "orders": 341,
+      "revenue": 283816.3,
+      "aov": 832.31
+    }
+  ],
+  "customer_segments_simple": [
+    {
+      "customer_segment": "High Value",
+      "customer_count": 439,
+      "total_revenue": 3869105.38,
+      "avg_orders": 10.6,
+      "avg_spent": 8813.45,
+      "rev_share": 94.44
+    },
+    {
+      "customer_segment": "Loyal",
+      "customer_count": 45,
+      "total_revenue": 184246.68,
+      "avg_orders": 6.0,
+      "avg_spent": 4094.37,
+      "rev_share": 4.5
+    },
+    {
+      "customer_segment": "Potential",
+      "customer_count": 14,
+      "total_revenue": 42287.46,
+      "avg_orders": 3.7,
+      "avg_spent": 3020.53,
+      "rev_share": 1.03
+    },
+    {
+      "customer_segment": "Regular",
+      "customer_count": 2,
+      "total_revenue": 1463.79,
+      "avg_orders": 2.0,
+      "avg_spent": 731.9,
+      "rev_share": 0.04
+    }
+  ],
+  "customer_segments_rfm": [
+    {
+      "rfm_segment": "Potential",
+      "customer_count": 103,
+      "total_revenue": 1109376.61,
+      "avg_orders": 13.0,
+      "avg_spent": 10770.65,
+      "rev_share": 27.08
+    },
+    {
+      "rfm_segment": "At Risk",
+      "customer_count": 97,
+      "total_revenue": 1056140.34,
+      "avg_orders": 13.4,
+      "avg_spent": 10888.04,
+      "rev_share": 25.78
+    },
+    {
+      "rfm_segment": "Loyal",
+      "customer_count": 114,
+      "total_revenue": 832281.14,
+      "avg_orders": 8.7,
+      "avg_spent": 7300.71,
+      "rev_share": 20.31
+    },
+    {
+      "rfm_segment": "Regular",
+      "customer_count": 103,
+      "total_revenue": 679035.85,
+      "avg_orders": 8.2,
+      "avg_spent": 6592.58,
+      "rev_share": 16.57
+    },
+    {
+      "rfm_segment": "High Value",
+      "customer_count": 83,
+      "total_revenue": 420269.37,
+      "avg_orders": 6.3,
+      "avg_spent": 5063.49,
+      "rev_share": 10.26
+    }
+  ],
+  "city_performance": [
+    {
+      "City": "Chennai",
+      "customer_count": 109,
+      "total_orders": 1127,
+      "total_revenue": 935205.19,
+      "avg_spent_per_customer": 8579.86,
+      "avg_orders_per_customer": 10.3,
+      "rev_share": 22.83
+    },
+    {
+      "City": "Mumbai",
+      "customer_count": 112,
+      "total_orders": 1087,
+      "total_revenue": 894724.99,
+      "avg_spent_per_customer": 7988.62,
+      "avg_orders_per_customer": 9.7,
+      "rev_share": 21.84
+    },
+    {
+      "City": "Bangalore",
+      "customer_count": 95,
+      "total_orders": 1007,
+      "total_revenue": 826320.58,
+      "avg_spent_per_customer": 8698.11,
+      "avg_orders_per_customer": 10.6,
+      "rev_share": 20.17
+    },
+    {
+      "City": "Hyderabad",
+      "customer_count": 91,
+      "total_orders": 882,
+      "total_revenue": 729276.14,
+      "avg_spent_per_customer": 8014.02,
+      "avg_orders_per_customer": 9.7,
+      "rev_share": 17.8
+    },
+    {
+      "City": "Delhi",
+      "customer_count": 93,
+      "total_orders": 897,
+      "total_revenue": 711576.41,
+      "avg_spent_per_customer": 7651.36,
+      "avg_orders_per_customer": 9.6,
+      "rev_share": 17.37
+    }
+  ],
+  "ratings_distribution": [
+    {
+      "bracket": "2.0-3.0",
+      "count": 784,
+      "percentage": 22.4
+    },
+    {
+      "bracket": "3.1-3.5",
+      "count": 683,
+      "percentage": 19.51
+    },
+    {
+      "bracket": "3.6-4.0",
+      "count": 678,
+      "percentage": 19.37
+    },
+    {
+      "bracket": "4.1-4.5",
+      "count": 688,
+      "percentage": 19.66
+    },
+    {
+      "bracket": "4.6-5.0",
+      "count": 667,
+      "percentage": 19.06
+    }
+  ],
+  "restaurants": [
+    {
+      "RestaurantID": 118,
+      "total_orders": 121,
+      "total_revenue": 106094.61,
+      "average_order_value": 876.81,
+      "revenue_percentage": 2.59,
+      "Name": "KFC 118",
+      "Cuisine": "Fast Food",
+      "avg_rating": 3.82,
+      "rating_count": 65,
+      "revenue_rank": 1
+    },
+    {
+      "RestaurantID": 123,
+      "total_orders": 120,
+      "total_revenue": 98591.6,
+      "average_order_value": 821.6,
+      "revenue_percentage": 2.41,
+      "Name": "Empire 123",
+      "Cuisine": "Desserts",
+      "avg_rating": 3.84,
+      "rating_count": 78,
+      "revenue_rank": 2
+    },
+    {
+      "RestaurantID": 142,
+      "total_orders": 117,
+      "total_revenue": 97390.16,
+      "average_order_value": 832.39,
+      "revenue_percentage": 2.38,
+      "Name": "Toscano 142",
+      "Cuisine": "Fast Food",
+      "avg_rating": 3.81,
+      "rating_count": 73,
+      "revenue_rank": 3
+    },
+    {
+      "RestaurantID": 126,
+      "total_orders": 119,
+      "total_revenue": 97369.28,
+      "average_order_value": 818.23,
+      "revenue_percentage": 2.38,
+      "Name": "Toscano 126",
+      "Cuisine": "North Indian",
+      "avg_rating": 3.65,
+      "rating_count": 79,
+      "revenue_rank": 4
+    },
+    {
+      "RestaurantID": 102,
+      "total_orders": 110,
+      "total_revenue": 94604.34,
+      "average_order_value": 860.04,
+      "revenue_percentage": 2.31,
+      "Name": "Thalappakatti 102",
+      "Cuisine": "Chinese",
+      "avg_rating": 3.76,
+      "rating_count": 68,
+      "revenue_rank": 5
+    },
+    {
+      "RestaurantID": 117,
+      "total_orders": 110,
+      "total_revenue": 92869.34,
+      "average_order_value": 844.27,
+      "revenue_percentage": 2.27,
+      "Name": "Dominos 117",
+      "Cuisine": "Chinese",
+      "avg_rating": 3.74,
+      "rating_count": 88,
+      "revenue_rank": 6
+    },
+    {
+      "RestaurantID": 116,
+      "total_orders": 113,
+      "total_revenue": 91037.38,
+      "average_order_value": 805.64,
+      "revenue_percentage": 2.22,
+      "Name": "Paradise 116",
+      "Cuisine": "Desserts",
+      "avg_rating": 3.75,
+      "rating_count": 85,
+      "revenue_rank": 7
+    },
+    {
+      "RestaurantID": 145,
+      "total_orders": 112,
+      "total_revenue": 90540.06,
+      "average_order_value": 808.39,
+      "revenue_percentage": 2.21,
+      "Name": "Paradise 145",
+      "Cuisine": "Italian",
+      "avg_rating": 3.77,
+      "rating_count": 74,
+      "revenue_rank": 8
+    },
+    {
+      "RestaurantID": 113,
+      "total_orders": 110,
+      "total_revenue": 90014.1,
+      "average_order_value": 818.31,
+      "revenue_percentage": 2.2,
+      "Name": "Empire 113",
+      "Cuisine": "North Indian",
+      "avg_rating": 3.7,
+      "rating_count": 88,
+      "revenue_rank": 9
+    },
+    {
+      "RestaurantID": 115,
+      "total_orders": 110,
+      "total_revenue": 89780.38,
+      "average_order_value": 816.19,
+      "revenue_percentage": 2.19,
+      "Name": "Toscano 115",
+      "Cuisine": "Biryani",
+      "avg_rating": 3.74,
+      "rating_count": 68,
+      "revenue_rank": 10
+    },
+    {
+      "RestaurantID": 132,
+      "total_orders": 105,
+      "total_revenue": 88529.16,
+      "average_order_value": 843.13,
+      "revenue_percentage": 2.16,
+      "Name": "KFC 132",
+      "Cuisine": "Chinese",
+      "avg_rating": 3.71,
+      "rating_count": 60,
+      "revenue_rank": 11
+    },
+    {
+      "RestaurantID": 112,
+      "total_orders": 106,
+      "total_revenue": 88021.26,
+      "average_order_value": 830.39,
+      "revenue_percentage": 2.15,
+      "Name": "Paradise 112",
+      "Cuisine": "Biryani",
+      "avg_rating": 3.91,
+      "rating_count": 70,
+      "revenue_rank": 12
+    },
+    {
+      "RestaurantID": 125,
+      "total_orders": 100,
+      "total_revenue": 87845.65,
+      "average_order_value": 878.46,
+      "revenue_percentage": 2.14,
+      "Name": "Meghana Foods 125",
+      "Cuisine": "Italian",
+      "avg_rating": 3.78,
+      "rating_count": 61,
+      "revenue_rank": 13
+    },
+    {
+      "RestaurantID": 148,
+      "total_orders": 103,
+      "total_revenue": 86609.75,
+      "average_order_value": 840.87,
+      "revenue_percentage": 2.11,
+      "Name": "Toscano 148",
+      "Cuisine": "Italian",
+      "avg_rating": 3.7,
+      "rating_count": 91,
+      "revenue_rank": 14
+    },
+    {
+      "RestaurantID": 129,
+      "total_orders": 105,
+      "total_revenue": 85863.33,
+      "average_order_value": 817.75,
+      "revenue_percentage": 2.1,
+      "Name": "Paradise 129",
+      "Cuisine": "Chinese",
+      "avg_rating": 3.94,
+      "rating_count": 74,
+      "revenue_rank": 15
+    },
+    {
+      "RestaurantID": 149,
+      "total_orders": 105,
+      "total_revenue": 85346.66,
+      "average_order_value": 812.83,
+      "revenue_percentage": 2.08,
+      "Name": "Empire 149",
+      "Cuisine": "North Indian",
+      "avg_rating": 3.81,
+      "rating_count": 52,
+      "revenue_rank": 16
+    },
+    {
+      "RestaurantID": 104,
+      "total_orders": 97,
+      "total_revenue": 85254.57,
+      "average_order_value": 878.91,
+      "revenue_percentage": 2.08,
+      "Name": "KFC 104",
+      "Cuisine": "Fast Food",
+      "avg_rating": 3.76,
+      "rating_count": 70,
+      "revenue_rank": 17
+    },
+    {
+      "RestaurantID": 150,
+      "total_orders": 96,
+      "total_revenue": 84748.7,
+      "average_order_value": 882.8,
+      "revenue_percentage": 2.07,
+      "Name": "Buhari 150",
+      "Cuisine": "North Indian",
+      "avg_rating": 3.78,
+      "rating_count": 71,
+      "revenue_rank": 18
+    },
+    {
+      "RestaurantID": 138,
+      "total_orders": 100,
+      "total_revenue": 84344.66,
+      "average_order_value": 843.45,
+      "revenue_percentage": 2.06,
+      "Name": "KFC 138",
+      "Cuisine": "Italian",
+      "avg_rating": 3.73,
+      "rating_count": 64,
+      "revenue_rank": 19
+    },
+    {
+      "RestaurantID": 128,
+      "total_orders": 109,
+      "total_revenue": 84152.64,
+      "average_order_value": 772.04,
+      "revenue_percentage": 2.05,
+      "Name": "Meghana Foods 128",
+      "Cuisine": "Biryani",
+      "avg_rating": 3.66,
+      "rating_count": 70,
+      "revenue_rank": 20
+    },
+    {
+      "RestaurantID": 105,
+      "total_orders": 100,
+      "total_revenue": 84008.66,
+      "average_order_value": 840.09,
+      "revenue_percentage": 2.05,
+      "Name": "Buhari 105",
+      "Cuisine": "Italian",
+      "avg_rating": 3.92,
+      "rating_count": 66,
+      "revenue_rank": 21
+    },
+    {
+      "RestaurantID": 124,
+      "total_orders": 99,
+      "total_revenue": 83615.83,
+      "average_order_value": 844.6,
+      "revenue_percentage": 2.04,
+      "Name": "Dominos 124",
+      "Cuisine": "Italian",
+      "avg_rating": 3.72,
+      "rating_count": 78,
+      "revenue_rank": 22
+    },
+    {
+      "RestaurantID": 119,
+      "total_orders": 99,
+      "total_revenue": 83428.78,
+      "average_order_value": 842.71,
+      "revenue_percentage": 2.04,
+      "Name": "Buhari 119",
+      "Cuisine": "Desserts",
+      "avg_rating": 3.62,
+      "rating_count": 75,
+      "revenue_rank": 23
+    },
+    {
+      "RestaurantID": 139,
+      "total_orders": 104,
+      "total_revenue": 83004.0,
+      "average_order_value": 798.12,
+      "revenue_percentage": 2.03,
+      "Name": "Empire 139",
+      "Cuisine": "South Indian",
+      "avg_rating": 3.69,
+      "rating_count": 72,
+      "revenue_rank": 24
+    },
+    {
+      "RestaurantID": 143,
+      "total_orders": 98,
+      "total_revenue": 82052.75,
+      "average_order_value": 837.27,
+      "revenue_percentage": 2.0,
+      "Name": "Toscano 143",
+      "Cuisine": "Desserts",
+      "avg_rating": 3.69,
+      "rating_count": 60,
+      "revenue_rank": 25
+    },
+    {
+      "RestaurantID": 144,
+      "total_orders": 96,
+      "total_revenue": 81267.09,
+      "average_order_value": 846.53,
+      "revenue_percentage": 1.98,
+      "Name": "Thalappakatti 144",
+      "Cuisine": "South Indian",
+      "avg_rating": 3.81,
+      "rating_count": 86,
+      "revenue_rank": 26
+    },
+    {
+      "RestaurantID": 120,
+      "total_orders": 103,
+      "total_revenue": 80487.63,
+      "average_order_value": 781.43,
+      "revenue_percentage": 1.96,
+      "Name": "Toscano 120",
+      "Cuisine": "Chinese",
+      "avg_rating": 3.76,
+      "rating_count": 69,
+      "revenue_rank": 27
+    },
+    {
+      "RestaurantID": 107,
+      "total_orders": 94,
+      "total_revenue": 79758.54,
+      "average_order_value": 848.5,
+      "revenue_percentage": 1.95,
+      "Name": "Paradise 107",
+      "Cuisine": "North Indian",
+      "avg_rating": 3.75,
+      "rating_count": 70,
+      "revenue_rank": 28
+    },
+    {
+      "RestaurantID": 122,
+      "total_orders": 102,
+      "total_revenue": 79528.73,
+      "average_order_value": 779.69,
+      "revenue_percentage": 1.94,
+      "Name": "Empire 122",
+      "Cuisine": "South Indian",
+      "avg_rating": 3.8,
+      "rating_count": 74,
+      "revenue_rank": 29
+    },
+    {
+      "RestaurantID": 109,
+      "total_orders": 94,
+      "total_revenue": 79465.09,
+      "average_order_value": 845.37,
+      "revenue_percentage": 1.94,
+      "Name": "Meghana Foods 109",
+      "Cuisine": "Chinese",
+      "avg_rating": 3.69,
+      "rating_count": 63,
+      "revenue_rank": 30
+    },
+    {
+      "RestaurantID": 135,
+      "total_orders": 102,
+      "total_revenue": 79410.46,
+      "average_order_value": 778.53,
+      "revenue_percentage": 1.94,
+      "Name": "Toscano 135",
+      "Cuisine": "Biryani",
+      "avg_rating": 3.86,
+      "rating_count": 59,
+      "revenue_rank": 31
+    },
+    {
+      "RestaurantID": 121,
+      "total_orders": 99,
+      "total_revenue": 78591.26,
+      "average_order_value": 793.85,
+      "revenue_percentage": 1.92,
+      "Name": "Buhari 121",
+      "Cuisine": "North Indian",
+      "avg_rating": 3.76,
+      "rating_count": 74,
+      "revenue_rank": 32
+    },
+    {
+      "RestaurantID": 146,
+      "total_orders": 91,
+      "total_revenue": 78324.94,
+      "average_order_value": 860.71,
+      "revenue_percentage": 1.91,
+      "Name": "Paradise 146",
+      "Cuisine": "North Indian",
+      "avg_rating": 3.76,
+      "rating_count": 60,
+      "revenue_rank": 33
+    },
+    {
+      "RestaurantID": 103,
+      "total_orders": 99,
+      "total_revenue": 78027.21,
+      "average_order_value": 788.15,
+      "revenue_percentage": 1.9,
+      "Name": "Paradise 103",
+      "Cuisine": "Biryani",
+      "avg_rating": 3.66,
+      "rating_count": 68,
+      "revenue_rank": 34
+    },
+    {
+      "RestaurantID": 140,
+      "total_orders": 99,
+      "total_revenue": 78018.37,
+      "average_order_value": 788.06,
+      "revenue_percentage": 1.9,
+      "Name": "Thalappakatti 140",
+      "Cuisine": "South Indian",
+      "avg_rating": 3.79,
+      "rating_count": 69,
+      "revenue_rank": 35
+    },
+    {
+      "RestaurantID": 106,
+      "total_orders": 97,
+      "total_revenue": 76454.64,
+      "average_order_value": 788.19,
+      "revenue_percentage": 1.87,
+      "Name": "A2B 106",
+      "Cuisine": "North Indian",
+      "avg_rating": 3.69,
+      "rating_count": 73,
+      "revenue_rank": 36
+    },
+    {
+      "RestaurantID": 130,
+      "total_orders": 95,
+      "total_revenue": 76315.91,
+      "average_order_value": 803.33,
+      "revenue_percentage": 1.86,
+      "Name": "Meghana Foods 130",
+      "Cuisine": "North Indian",
+      "avg_rating": 4.01,
+      "rating_count": 54,
+      "revenue_rank": 37
+    },
+    {
+      "RestaurantID": 137,
+      "total_orders": 90,
+      "total_revenue": 75856.22,
+      "average_order_value": 842.85,
+      "revenue_percentage": 1.85,
+      "Name": "Toscano 137",
+      "Cuisine": "Italian",
+      "avg_rating": 3.76,
+      "rating_count": 76,
+      "revenue_rank": 38
+    },
+    {
+      "RestaurantID": 131,
+      "total_orders": 90,
+      "total_revenue": 75844.58,
+      "average_order_value": 842.72,
+      "revenue_percentage": 1.85,
+      "Name": "A2B 131",
+      "Cuisine": "Italian",
+      "avg_rating": 3.83,
+      "rating_count": 62,
+      "revenue_rank": 39
+    },
+    {
+      "RestaurantID": 110,
+      "total_orders": 95,
+      "total_revenue": 74494.48,
+      "average_order_value": 784.15,
+      "revenue_percentage": 1.82,
+      "Name": "Meghana Foods 110",
+      "Cuisine": "Chinese",
+      "avg_rating": 3.81,
+      "rating_count": 72,
+      "revenue_rank": 40
+    },
+    {
+      "RestaurantID": 147,
+      "total_orders": 96,
+      "total_revenue": 73658.88,
+      "average_order_value": 767.28,
+      "revenue_percentage": 1.8,
+      "Name": "KFC 147",
+      "Cuisine": "Desserts",
+      "avg_rating": 3.76,
+      "rating_count": 77,
+      "revenue_rank": 41
+    },
+    {
+      "RestaurantID": 114,
+      "total_orders": 95,
+      "total_revenue": 73582.18,
+      "average_order_value": 774.55,
+      "revenue_percentage": 1.8,
+      "Name": "A2B 114",
+      "Cuisine": "Chinese",
+      "avg_rating": 3.82,
+      "rating_count": 77,
+      "revenue_rank": 42
+    },
+    {
+      "RestaurantID": 136,
+      "total_orders": 91,
+      "total_revenue": 72112.68,
+      "average_order_value": 792.45,
+      "revenue_percentage": 1.76,
+      "Name": "Meghana Foods 136",
+      "Cuisine": "Desserts",
+      "avg_rating": 3.61,
+      "rating_count": 70,
+      "revenue_rank": 43
+    },
+    {
+      "RestaurantID": 127,
+      "total_orders": 86,
+      "total_revenue": 71111.69,
+      "average_order_value": 826.88,
+      "revenue_percentage": 1.74,
+      "Name": "A2B 127",
+      "Cuisine": "Chinese",
+      "avg_rating": 3.56,
+      "rating_count": 74,
+      "revenue_rank": 44
+    },
+    {
+      "RestaurantID": 111,
+      "total_orders": 92,
+      "total_revenue": 71018.58,
+      "average_order_value": 771.94,
+      "revenue_percentage": 1.73,
+      "Name": "Toscano 111",
+      "Cuisine": "Italian",
+      "avg_rating": 3.76,
+      "rating_count": 50,
+      "revenue_rank": 45
+    },
+    {
+      "RestaurantID": 133,
+      "total_orders": 86,
+      "total_revenue": 70517.75,
+      "average_order_value": 819.97,
+      "revenue_percentage": 1.72,
+      "Name": "Empire 133",
+      "Cuisine": "Italian",
+      "avg_rating": 3.82,
+      "rating_count": 64,
+      "revenue_rank": 46
+    },
+    {
+      "RestaurantID": 134,
+      "total_orders": 90,
+      "total_revenue": 68896.64,
+      "average_order_value": 765.52,
+      "revenue_percentage": 1.68,
+      "Name": "KFC 134",
+      "Cuisine": "Desserts",
+      "avg_rating": 3.76,
+      "rating_count": 60,
+      "revenue_rank": 47
+    },
+    {
+      "RestaurantID": 108,
+      "total_orders": 86,
+      "total_revenue": 68628.16,
+      "average_order_value": 798.0,
+      "revenue_percentage": 1.68,
+      "Name": "Toscano 108",
+      "Cuisine": "Biryani",
+      "avg_rating": 3.92,
+      "rating_count": 79,
+      "revenue_rank": 48
+    },
+    {
+      "RestaurantID": 101,
+      "total_orders": 87,
+      "total_revenue": 68443.5,
+      "average_order_value": 786.71,
+      "revenue_percentage": 1.67,
+      "Name": "KFC 101",
+      "Cuisine": "Fast Food",
+      "avg_rating": 3.63,
+      "rating_count": 61,
+      "revenue_rank": 49
+    },
+    {
+      "RestaurantID": 141,
+      "total_orders": 77,
+      "total_revenue": 62170.45,
+      "average_order_value": 807.41,
+      "revenue_percentage": 1.52,
+      "Name": "Dominos 141",
+      "Cuisine": "Desserts",
+      "avg_rating": 3.7,
+      "rating_count": 59,
+      "revenue_rank": 50
+    }
+  ],
+  "top_customers": [
+    {
+      "CustomerID": 154,
+      "CustomerName": "Customer_154",
+      "City": "Chennai",
+      "SignupDate": "2024-10-01",
+      "orders": 21,
+      "spent": 18908.59,
+      "aov": 900.41,
+      "customer_segment": "High Value",
+      "rfm_segment": "At Risk",
+      "last_order_str": "2025-06-24"
+    },
+    {
+      "CustomerID": 39,
+      "CustomerName": "Customer_39",
+      "City": "Chennai",
+      "SignupDate": "2024-04-20",
+      "orders": 17,
+      "spent": 17209.25,
+      "aov": 1012.31,
+      "customer_segment": "High Value",
+      "rfm_segment": "At Risk",
+      "last_order_str": "2025-06-25"
+    },
+    {
+      "CustomerID": 12,
+      "CustomerName": "Customer_12",
+      "City": "Hyderabad",
+      "SignupDate": "2024-10-29",
+      "orders": 19,
+      "spent": 17031.57,
+      "aov": 896.4,
+      "customer_segment": "High Value",
+      "rfm_segment": "At Risk",
+      "last_order_str": "2025-06-29"
+    },
+    {
+      "CustomerID": 435,
+      "CustomerName": "Customer_435",
+      "City": "Mumbai",
+      "SignupDate": "2024-12-19",
+      "orders": 20,
+      "spent": 16996.47,
+      "aov": 849.82,
+      "customer_segment": "High Value",
+      "rfm_segment": "At Risk",
+      "last_order_str": "2025-06-28"
+    },
+    {
+      "CustomerID": 173,
+      "CustomerName": "Customer_173",
+      "City": "Bangalore",
+      "SignupDate": "2024-11-07",
+      "orders": 19,
+      "spent": 16769.33,
+      "aov": 882.6,
+      "customer_segment": "High Value",
+      "rfm_segment": "At Risk",
+      "last_order_str": "2025-06-26"
+    },
+    {
+      "CustomerID": 471,
+      "CustomerName": "Customer_471",
+      "City": "Bangalore",
+      "SignupDate": "2024-03-22",
+      "orders": 16,
+      "spent": 16467.25,
+      "aov": 1029.2,
+      "customer_segment": "High Value",
+      "rfm_segment": "Potential",
+      "last_order_str": "2025-06-15"
+    },
+    {
+      "CustomerID": 188,
+      "CustomerName": "Customer_188",
+      "City": "Chennai",
+      "SignupDate": "2024-05-02",
+      "orders": 18,
+      "spent": 16352.86,
+      "aov": 908.49,
+      "customer_segment": "High Value",
+      "rfm_segment": "Potential",
+      "last_order_str": "2025-06-05"
+    },
+    {
+      "CustomerID": 476,
+      "CustomerName": "Customer_476",
+      "City": "Delhi",
+      "SignupDate": "2024-08-28",
+      "orders": 18,
+      "spent": 16126.06,
+      "aov": 895.89,
+      "customer_segment": "High Value",
+      "rfm_segment": "At Risk",
+      "last_order_str": "2025-06-29"
+    },
+    {
+      "CustomerID": 313,
+      "CustomerName": "Customer_313",
+      "City": "Bangalore",
+      "SignupDate": "2024-03-20",
+      "orders": 18,
+      "spent": 15415.02,
+      "aov": 856.39,
+      "customer_segment": "High Value",
+      "rfm_segment": "At Risk",
+      "last_order_str": "2025-06-29"
+    },
+    {
+      "CustomerID": 500,
+      "CustomerName": "Customer_500",
+      "City": "Chennai",
+      "SignupDate": "2024-02-29",
+      "orders": 17,
+      "spent": 14813.0,
+      "aov": 871.35,
+      "customer_segment": "High Value",
+      "rfm_segment": "Potential",
+      "last_order_str": "2025-06-15"
+    },
+    {
+      "CustomerID": 84,
+      "CustomerName": "Customer_84",
+      "City": "Delhi",
+      "SignupDate": "2024-11-27",
+      "orders": 17,
+      "spent": 14811.75,
+      "aov": 871.28,
+      "customer_segment": "High Value",
+      "rfm_segment": "Potential",
+      "last_order_str": "2025-06-14"
+    },
+    {
+      "CustomerID": 422,
+      "CustomerName": "Customer_422",
+      "City": "Mumbai",
+      "SignupDate": "2024-06-19",
+      "orders": 15,
+      "spent": 14594.91,
+      "aov": 972.99,
+      "customer_segment": "High Value",
+      "rfm_segment": "At Risk",
+      "last_order_str": "2025-06-29"
+    },
+    {
+      "CustomerID": 459,
+      "CustomerName": "Customer_459",
+      "City": "Bangalore",
+      "SignupDate": "2024-03-20",
+      "orders": 17,
+      "spent": 14592.11,
+      "aov": 858.36,
+      "customer_segment": "High Value",
+      "rfm_segment": "Potential",
+      "last_order_str": "2025-06-22"
+    },
+    {
+      "CustomerID": 101,
+      "CustomerName": "Customer_101",
+      "City": "Mumbai",
+      "SignupDate": "2024-01-29",
+      "orders": 15,
+      "spent": 14530.06,
+      "aov": 968.67,
+      "customer_segment": "High Value",
+      "rfm_segment": "At Risk",
+      "last_order_str": "2025-06-26"
+    },
+    {
+      "CustomerID": 303,
+      "CustomerName": "Customer_303",
+      "City": "Chennai",
+      "SignupDate": "2024-01-02",
+      "orders": 20,
+      "spent": 14529.31,
+      "aov": 726.47,
+      "customer_segment": "High Value",
+      "rfm_segment": "At Risk",
+      "last_order_str": "2025-06-28"
+    },
+    {
+      "CustomerID": 117,
+      "CustomerName": "Customer_117",
+      "City": "Bangalore",
+      "SignupDate": "2024-03-14",
+      "orders": 16,
+      "spent": 14339.55,
+      "aov": 896.22,
+      "customer_segment": "High Value",
+      "rfm_segment": "At Risk",
+      "last_order_str": "2025-06-27"
+    },
+    {
+      "CustomerID": 399,
+      "CustomerName": "Customer_399",
+      "City": "Mumbai",
+      "SignupDate": "2024-02-29",
+      "orders": 15,
+      "spent": 14272.65,
+      "aov": 951.51,
+      "customer_segment": "High Value",
+      "rfm_segment": "At Risk",
+      "last_order_str": "2025-06-27"
+    },
+    {
+      "CustomerID": 354,
+      "CustomerName": "Customer_354",
+      "City": "Mumbai",
+      "SignupDate": "2024-04-14",
+      "orders": 15,
+      "spent": 14054.76,
+      "aov": 936.98,
+      "customer_segment": "High Value",
+      "rfm_segment": "Potential",
+      "last_order_str": "2025-06-11"
+    },
+    {
+      "CustomerID": 301,
+      "CustomerName": "Customer_301",
+      "City": "Delhi",
+      "SignupDate": "2024-03-25",
+      "orders": 14,
+      "spent": 14005.57,
+      "aov": 1000.4,
+      "customer_segment": "High Value",
+      "rfm_segment": "Potential",
+      "last_order_str": "2025-04-19"
+    },
+    {
+      "CustomerID": 160,
+      "CustomerName": "Customer_160",
+      "City": "Hyderabad",
+      "SignupDate": "2024-08-10",
+      "orders": 15,
+      "spent": 13948.22,
+      "aov": 929.88,
+      "customer_segment": "High Value",
+      "rfm_segment": "Potential",
+      "last_order_str": "2025-06-03"
+    },
+    {
+      "CustomerID": 161,
+      "CustomerName": "Customer_161",
+      "City": "Hyderabad",
+      "SignupDate": "2024-03-21",
+      "orders": 15,
+      "spent": 13918.83,
+      "aov": 927.92,
+      "customer_segment": "High Value",
+      "rfm_segment": "Potential",
+      "last_order_str": "2025-06-12"
+    },
+    {
+      "CustomerID": 119,
+      "CustomerName": "Customer_119",
+      "City": "Chennai",
+      "SignupDate": "2024-03-12",
+      "orders": 13,
+      "spent": 13898.83,
+      "aov": 1069.14,
+      "customer_segment": "High Value",
+      "rfm_segment": "Potential",
+      "last_order_str": "2025-06-22"
+    },
+    {
+      "CustomerID": 288,
+      "CustomerName": "Customer_288",
+      "City": "Delhi",
+      "SignupDate": "2024-01-26",
+      "orders": 16,
+      "spent": 13770.95,
+      "aov": 860.68,
+      "customer_segment": "High Value",
+      "rfm_segment": "Potential",
+      "last_order_str": "2025-06-18"
+    },
+    {
+      "CustomerID": 302,
+      "CustomerName": "Customer_302",
+      "City": "Delhi",
+      "SignupDate": "2024-07-13",
+      "orders": 15,
+      "spent": 13685.29,
+      "aov": 912.35,
+      "customer_segment": "High Value",
+      "rfm_segment": "At Risk",
+      "last_order_str": "2025-06-24"
+    },
+    {
+      "CustomerID": 364,
+      "CustomerName": "Customer_364",
+      "City": "Delhi",
+      "SignupDate": "2024-08-22",
+      "orders": 15,
+      "spent": 13682.24,
+      "aov": 912.15,
+      "customer_segment": "High Value",
+      "rfm_segment": "At Risk",
+      "last_order_str": "2025-06-24"
+    }
+  ],
+  "recent_orders": [
+    {
+      "OrderID": 13718,
+      "CustomerID": 340,
+      "CustomerName": "Customer_340",
+      "City": "Mumbai",
+      "RestaurantID": 146,
+      "Name": "Paradise 146",
+      "Cuisine": "North Indian",
+      "OrderDateStr": "2025-06-30 23:56",
+      "Amount": 1167.5
+    },
+    {
+      "OrderID": 11107,
+      "CustomerID": 445,
+      "CustomerName": "Customer_445",
+      "City": "Delhi",
+      "RestaurantID": 101,
+      "Name": "KFC 101",
+      "Cuisine": "Fast Food",
+      "OrderDateStr": "2025-06-30 22:50",
+      "Amount": 177.21
+    },
+    {
+      "OrderID": 10831,
+      "CustomerID": 32,
+      "CustomerName": "Customer_32",
+      "City": "Mumbai",
+      "RestaurantID": 108,
+      "Name": "Toscano 108",
+      "Cuisine": "Biryani",
+      "OrderDateStr": "2025-06-30 22:19",
+      "Amount": 1267.56
+    },
+    {
+      "OrderID": 12469,
+      "CustomerID": 387,
+      "CustomerName": "Customer_387",
+      "City": "Bangalore",
+      "RestaurantID": 128,
+      "Name": "Meghana Foods 128",
+      "Cuisine": "Biryani",
+      "OrderDateStr": "2025-06-30 22:02",
+      "Amount": 339.59
+    },
+    {
+      "OrderID": 11337,
+      "CustomerID": 89,
+      "CustomerName": "Customer_89",
+      "City": "Mumbai",
+      "RestaurantID": 115,
+      "Name": "Toscano 115",
+      "Cuisine": "Biryani",
+      "OrderDateStr": "2025-06-30 21:38",
+      "Amount": 785.59
+    },
+    {
+      "OrderID": 12964,
+      "CustomerID": 415,
+      "CustomerName": "Customer_415",
+      "City": "Chennai",
+      "RestaurantID": 117,
+      "Name": "Dominos 117",
+      "Cuisine": "Chinese",
+      "OrderDateStr": "2025-06-30 20:00",
+      "Amount": 262.87
+    },
+    {
+      "OrderID": 12626,
+      "CustomerID": 42,
+      "CustomerName": "Customer_42",
+      "City": "Chennai",
+      "RestaurantID": 125,
+      "Name": "Meghana Foods 125",
+      "Cuisine": "Italian",
+      "OrderDateStr": "2025-06-30 19:57",
+      "Amount": 1045.31
+    },
+    {
+      "OrderID": 14308,
+      "CustomerID": 13,
+      "CustomerName": "Customer_13",
+      "City": "Delhi",
+      "RestaurantID": 149,
+      "Name": "Empire 149",
+      "Cuisine": "North Indian",
+      "OrderDateStr": "2025-06-30 19:30",
+      "Amount": 241.47
+    },
+    {
+      "OrderID": 12688,
+      "CustomerID": 228,
+      "CustomerName": "Customer_228",
+      "City": "Bangalore",
+      "RestaurantID": 104,
+      "Name": "KFC 104",
+      "Cuisine": "Fast Food",
+      "OrderDateStr": "2025-06-30 18:52",
+      "Amount": 291.49
+    },
+    {
+      "OrderID": 11942,
+      "CustomerID": 490,
+      "CustomerName": "Customer_490",
+      "City": "Bangalore",
+      "RestaurantID": 133,
+      "Name": "Empire 133",
+      "Cuisine": "Italian",
+      "OrderDateStr": "2025-06-30 18:40",
+      "Amount": 835.01
+    },
+    {
+      "OrderID": 12494,
+      "CustomerID": 20,
+      "CustomerName": "Customer_20",
+      "City": "Mumbai",
+      "RestaurantID": 136,
+      "Name": "Meghana Foods 136",
+      "Cuisine": "Desserts",
+      "OrderDateStr": "2025-06-30 17:40",
+      "Amount": 205.31
+    },
+    {
+      "OrderID": 12259,
+      "CustomerID": 258,
+      "CustomerName": "Customer_258",
+      "City": "Delhi",
+      "RestaurantID": 135,
+      "Name": "Toscano 135",
+      "Cuisine": "Biryani",
+      "OrderDateStr": "2025-06-30 17:35",
+      "Amount": 1096.64
+    },
+    {
+      "OrderID": 10557,
+      "CustomerID": 305,
+      "CustomerName": "Customer_305",
+      "City": "Hyderabad",
+      "RestaurantID": 102,
+      "Name": "Thalappakatti 102",
+      "Cuisine": "Chinese",
+      "OrderDateStr": "2025-06-30 17:28",
+      "Amount": 1148.04
+    },
+    {
+      "OrderID": 10636,
+      "CustomerID": 15,
+      "CustomerName": "Customer_15",
+      "City": "Mumbai",
+      "RestaurantID": 145,
+      "Name": "Paradise 145",
+      "Cuisine": "Italian",
+      "OrderDateStr": "2025-06-30 17:13",
+      "Amount": 255.9
+    },
+    {
+      "OrderID": 12021,
+      "CustomerID": 220,
+      "CustomerName": "Customer_220",
+      "City": "Chennai",
+      "RestaurantID": 104,
+      "Name": "KFC 104",
+      "Cuisine": "Fast Food",
+      "OrderDateStr": "2025-06-30 16:47",
+      "Amount": 1077.39
+    },
+    {
+      "OrderID": 11661,
+      "CustomerID": 463,
+      "CustomerName": "Customer_463",
+      "City": "Delhi",
+      "RestaurantID": 102,
+      "Name": "Thalappakatti 102",
+      "Cuisine": "Chinese",
+      "OrderDateStr": "2025-06-30 16:18",
+      "Amount": 398.31
+    },
+    {
+      "OrderID": 13172,
+      "CustomerID": 65,
+      "CustomerName": "Customer_65",
+      "City": "Bangalore",
+      "RestaurantID": 108,
+      "Name": "Toscano 108",
+      "Cuisine": "Biryani",
+      "OrderDateStr": "2025-06-30 14:35",
+      "Amount": 299.81
+    },
+    {
+      "OrderID": 13040,
+      "CustomerID": 356,
+      "CustomerName": "Customer_356",
+      "City": "Hyderabad",
+      "RestaurantID": 126,
+      "Name": "Toscano 126",
+      "Cuisine": "North Indian",
+      "OrderDateStr": "2025-06-30 14:30",
+      "Amount": 1450.1
+    },
+    {
+      "OrderID": 13506,
+      "CustomerID": 320,
+      "CustomerName": "Customer_320",
+      "City": "Hyderabad",
+      "RestaurantID": 123,
+      "Name": "Empire 123",
+      "Cuisine": "Desserts",
+      "OrderDateStr": "2025-06-30 14:20",
+      "Amount": 1113.45
+    },
+    {
+      "OrderID": 11163,
+      "CustomerID": 82,
+      "CustomerName": "Customer_82",
+      "City": "Chennai",
+      "RestaurantID": 123,
+      "Name": "Empire 123",
+      "Cuisine": "Desserts",
+      "OrderDateStr": "2025-06-30 14:18",
+      "Amount": 1276.34
+    },
+    {
+      "OrderID": 10041,
+      "CustomerID": 275,
+      "CustomerName": "Customer_275",
+      "City": "Hyderabad",
+      "RestaurantID": 133,
+      "Name": "Empire 133",
+      "Cuisine": "Italian",
+      "OrderDateStr": "2025-06-30 13:04",
+      "Amount": 1078.69
+    },
+    {
+      "OrderID": 12052,
+      "CustomerID": 279,
+      "CustomerName": "Customer_279",
+      "City": "Hyderabad",
+      "RestaurantID": 133,
+      "Name": "Empire 133",
+      "Cuisine": "Italian",
+      "OrderDateStr": "2025-06-30 11:58",
+      "Amount": 1131.06
+    },
+    {
+      "OrderID": 12979,
+      "CustomerID": 113,
+      "CustomerName": "Customer_113",
+      "City": "Delhi",
+      "RestaurantID": 127,
+      "Name": "A2B 127",
+      "Cuisine": "Chinese",
+      "OrderDateStr": "2025-06-30 11:35",
+      "Amount": 356.16
+    },
+    {
+      "OrderID": 11203,
+      "CustomerID": 426,
+      "CustomerName": "Customer_426",
+      "City": "Bangalore",
+      "RestaurantID": 103,
+      "Name": "Paradise 103",
+      "Cuisine": "Biryani",
+      "OrderDateStr": "2025-06-30 11:00",
+      "Amount": 585.22
+    },
+    {
+      "OrderID": 14118,
+      "CustomerID": 389,
+      "CustomerName": "Customer_389",
+      "City": "Chennai",
+      "RestaurantID": 125,
+      "Name": "Meghana Foods 125",
+      "Cuisine": "Italian",
+      "OrderDateStr": "2025-06-30 10:14",
+      "Amount": 463.44
+    },
+    {
+      "OrderID": 12029,
+      "CustomerID": 169,
+      "CustomerName": "Customer_169",
+      "City": "Chennai",
+      "RestaurantID": 130,
+      "Name": "Meghana Foods 130",
+      "Cuisine": "North Indian",
+      "OrderDateStr": "2025-06-30 10:10",
+      "Amount": 787.03
+    },
+    {
+      "OrderID": 11325,
+      "CustomerID": 338,
+      "CustomerName": "Customer_338",
+      "City": "Mumbai",
+      "RestaurantID": 107,
+      "Name": "Paradise 107",
+      "Cuisine": "North Indian",
+      "OrderDateStr": "2025-06-29 23:47",
+      "Amount": 167.54
+    },
+    {
+      "OrderID": 10167,
+      "CustomerID": 5,
+      "CustomerName": "Customer_5",
+      "City": "Delhi",
+      "RestaurantID": 132,
+      "Name": "KFC 132",
+      "Cuisine": "Chinese",
+      "OrderDateStr": "2025-06-29 23:29",
+      "Amount": 1465.4
+    },
+    {
+      "OrderID": 11067,
+      "CustomerID": 467,
+      "CustomerName": "Customer_467",
+      "City": "Bangalore",
+      "RestaurantID": 137,
+      "Name": "Toscano 137",
+      "Cuisine": "Italian",
+      "OrderDateStr": "2025-06-29 22:34",
+      "Amount": 599.94
+    },
+    {
+      "OrderID": 12113,
+      "CustomerID": 326,
+      "CustomerName": "Customer_326",
+      "City": "Chennai",
+      "RestaurantID": 139,
+      "Name": "Empire 139",
+      "Cuisine": "South Indian",
+      "OrderDateStr": "2025-06-29 22:23",
+      "Amount": 1041.93
+    }
+  ]
+};
+    let currentTab = 'overview';
+    let currentCuisineFilter = 'ALL';
+    let searchQuery = '';
+    let sortColumn = 'revenue';
+    let sortAsc = false;
+    let chartInstances = {};
+
+    const tabHeaders = {
+      overview: { title: 'Executive Overview', subtitle: 'Macro food delivery operational performance & KPI health' },
+      trends: { title: 'Revenue & Growth Analytics', subtitle: 'Monthly gross merchandise value, MoM growth & cumulative volume' },
+      restaurants: { title: 'Restaurant & Cuisine Intelligence', subtitle: '50 partner restaurants across 7 signature cuisines' },
+      customers: { title: 'Customer Segmentation & RFM Matrix', subtitle: '500 customers classified by Recency, Frequency, Monetary and Value tiers' },
+      operations: { title: 'Operational Timing & Satisfaction', subtitle: 'Day of week trends, hourly rush distributions and customer ratings' },
+      sql: { title: 'SQL Query & Schema Inspector', subtitle: 'Direct mapping of views and queries from 03_business_analysis.sql' },
+    };
+
+    function switchTab(tabId) {
+      currentTab = tabId;
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.className = 'tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 border border-transparent';
+      });
+      const activeBtn = document.getElementById('btn-' + tabId);
+      if (activeBtn) {
+        activeBtn.className = 'tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all bg-gradient-to-r from-orange-600/20 to-orange-500/10 text-orange-400 border border-orange-500/30';
+      }
+
+      document.getElementById('header-title').innerText = tabHeaders[tabId].title;
+      document.getElementById('header-subtitle').innerText = tabHeaders[tabId].subtitle;
+
+      renderCurrentTab();
+    }
+
+    function handleGlobalSearch(val) {
+      searchQuery = val.toLowerCase();
+      if (currentTab !== 'restaurants' && currentTab !== 'customers') {
+        switchTab('restaurants');
+      } else {
+        renderCurrentTab();
+      }
+    }
+
+    function renderCurrentTab() {
+      Object.keys(chartInstances).forEach(k => {
+        if (chartInstances[k]) {
+          try { chartInstances[k].destroy(); } catch(e) {}
+        }
+      });
+      chartInstances = {};
+
+      const container = document.getElementById('tab-content');
+      if (currentTab === 'overview') renderOverview(container);
+      else if (currentTab === 'trends') renderTrends(container);
+      else if (currentTab === 'restaurants') renderRestaurants(container);
+      else if (currentTab === 'customers') renderCustomers(container);
+      else if (currentTab === 'operations') renderOperations(container);
+      else if (currentTab === 'sql') renderSql(container);
+    }
+
+    function initChart(canvasId, config) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+
+      if (typeof Chart !== 'undefined') {
+        try {
+          chartInstances[canvasId] = new Chart(canvas.getContext('2d'), config);
+          return;
+        } catch (err) {
+          console.warn('Chart.js render fallback:', err);
+        }
+      }
+
+      renderCanvasFallback(canvas, config);
+    }
+
+    function renderCanvasFallback(canvas, config) {
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width = canvas.parentElement.clientWidth || 400;
+      const h = canvas.height = canvas.parentElement.clientHeight || 260;
+      ctx.clearRect(0, 0, w, h);
+
+      const type = config.type;
+      const data = config.data;
+      if (!data || !data.labels || !data.datasets) return;
+
+      if (type === 'doughnut' || type === 'pie') {
+        const dataset = data.datasets[0];
+        const total = dataset.data.reduce((a, b) => a + b, 0);
+        let startAngle = -Math.PI / 2;
+        const cx = w / 2, cy = h / 2, radius = Math.min(cx, cy) - 25;
+        const innerRadius = type === 'doughnut' ? radius * 0.55 : 0;
+
+        dataset.data.forEach((val, i) => {
+          const sliceAngle = (val / total) * 2 * Math.PI;
+          ctx.beginPath();
+          ctx.arc(cx, cy, radius, startAngle, startAngle + sliceAngle);
+          if (innerRadius > 0) {
+            ctx.arc(cx, cy, innerRadius, startAngle + sliceAngle, startAngle, true);
+          } else {
+            ctx.lineTo(cx, cy);
+          }
+          ctx.closePath();
+          ctx.fillStyle = dataset.backgroundColor[i % dataset.backgroundColor.length];
+          ctx.fill();
+          startAngle += sliceAngle;
+        });
+      } else {
+        const padX = 45, padY = 30;
+        const chartW = w - padX * 2, chartH = h - padY * 2;
+        const dataset = data.datasets[0];
+        const maxVal = Math.max(...dataset.data) * 1.15 || 1;
+        const count = data.labels.length;
+        const stepX = chartW / count;
+
+        ctx.strokeStyle = '#1F2937';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 4; i++) {
+          const y = padY + (chartH / 4) * i;
+          ctx.beginPath();
+          ctx.moveTo(padX, y);
+          ctx.lineTo(w - padX, y);
+          ctx.stroke();
+        }
+
+        if (type === 'bar') {
+          const barWidth = Math.min(stepX * 0.55, 36);
+          dataset.data.forEach((val, i) => {
+            const barH = (val / maxVal) * chartH;
+            const x = padX + i * stepX + (stepX - barWidth) / 2;
+            const y = padY + chartH - barH;
+            ctx.fillStyle = Array.isArray(dataset.backgroundColor) ? dataset.backgroundColor[i % dataset.backgroundColor.length] : (dataset.backgroundColor || '#F97316');
+            ctx.fillRect(x, y, barWidth, barH);
+
+            ctx.fillStyle = '#64748B';
+            ctx.font = '10px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(data.labels[i], x + barWidth / 2, h - 8);
+          });
+        } else if (type === 'line') {
+          ctx.beginPath();
+          dataset.data.forEach((val, i) => {
+            const x = padX + i * stepX + stepX / 2;
+            const y = padY + chartH - (val / maxVal) * chartH;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          });
+          ctx.strokeStyle = dataset.borderColor || '#10B981';
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+
+          dataset.data.forEach((val, i) => {
+            const x = padX + i * stepX + stepX / 2;
+            const y = padY + chartH - (val / maxVal) * chartH;
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, Math.PI * 2);
+            ctx.fillStyle = dataset.borderColor || '#10B981';
+            ctx.fill();
+
+            ctx.fillStyle = '#64748B';
+            ctx.font = '10px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(data.labels[i], x, h - 8);
+          });
+        }
+      }
+    }
+
+    // 1. OVERVIEW TAB
+    function renderOverview(container) {
+      const kpis = DATA.executive_kpis;
+      const monthly = DATA.monthly_performance;
+      const cuisines = DATA.cuisine_performance;
+      const topRest = DATA.restaurants.slice(0, 5);
+      const cuisineColors = ['#F97316', '#3B82F6', '#10B981', '#EC4899', '#8B5CF6', '#F59E0B', '#14B8A6'];
+
+      let topCuisinePills = cuisines.slice(0, 4).map((c, i) => {
+        return '<div class="flex justify-between items-center">' +
+          '<span class="flex items-center gap-1.5 text-slate-300">' +
+          '<span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: ' + cuisineColors[i] + '"></span>' +
+          c.Cuisine + '</span>' +
+          '<span class="font-mono text-slate-400"><strong class="text-white">' + c.revenue_share + '%</strong> (₹' + (c.revenue/1000).toFixed(0) + 'k)</span>' +
+        '</div>';
+      }).join('');
+
+      let topRestRows = topRest.map(r => {
+        return '<tr class="hover:bg-slate-900/60 transition-colors">' +
+          '<td class="py-3 px-3 font-bold text-orange-400">#' + r.revenue_rank + '</td>' +
+          '<td class="py-3 px-3 text-slate-400">#' + r.RestaurantID + '</td>' +
+          '<td class="py-3 px-3 font-sans font-semibold text-white">' + r.Name + '</td>' +
+          '<td class="py-3 px-3 font-sans"><span class="px-2 py-0.5 rounded-full text-[11px] bg-slate-800 text-slate-300 border border-slate-700">' + r.Cuisine + '</span></td>' +
+          '<td class="py-3 px-3 text-right text-slate-300">' + r.total_orders + '</td>' +
+          '<td class="py-3 px-3 text-right font-sans"><span class="px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-semibold">★ ' + r.avg_rating.toFixed(2) + '</span></td>' +
+          '<td class="py-3 px-3 text-right text-slate-300">₹' + r.average_order_value.toFixed(2) + '</td>' +
+          '<td class="py-3 px-3 text-right font-bold text-emerald-400">₹' + r.total_revenue.toLocaleString() + '</td>' +
+          '<td class="py-3 px-3 text-right text-slate-400">' + r.revenue_percentage + '%</td>' +
+        '</tr>';
+      }).join('');
+
+      container.innerHTML = `
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 glow-card">
+            <div class="flex justify-between items-center text-xs text-slate-400 font-semibold uppercase">Gross Revenue <span class="text-orange-400 font-bold">₹</span></div>
+            <div class="text-2xl font-extrabold text-white mt-2">₹` + (kpis.total_revenue / 1000000).toFixed(2) + `M</div>
+            <div class="mt-2 text-xs text-slate-400 flex justify-between"><span>5,000 Orders</span> <span class="text-emerald-400 font-mono">+7.1% Peak</span></div>
+          </div>
+
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 glow-card">
+            <div class="flex justify-between items-center text-xs text-slate-400 font-semibold uppercase">Total Orders <span class="text-blue-400">📦</span></div>
+            <div class="text-2xl font-extrabold text-white mt-2">` + kpis.total_orders.toLocaleString() + `</div>
+            <div class="mt-2 text-xs text-slate-400 flex justify-between"><span>H1 2025</span> <span class="text-blue-400 font-mono">833/mo avg</span></div>
+          </div>
+
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 glow-card">
+            <div class="flex justify-between items-center text-xs text-slate-400 font-semibold uppercase">Avg Order Value <span class="text-emerald-400">📊</span></div>
+            <div class="text-2xl font-extrabold text-white mt-2">₹` + kpis.average_order_value.toFixed(2) + `</div>
+            <div class="mt-2 text-xs text-slate-400">Min ₹100 • Max ₹1,500</div>
+          </div>
+
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 glow-card">
+            <div class="flex justify-between items-center text-xs text-slate-400 font-semibold uppercase">Repeat Rate <span class="text-purple-400">🔁</span></div>
+            <div class="text-2xl font-extrabold text-white mt-2">100%</div>
+            <div class="mt-2 text-xs text-slate-400">500 of 500 repeat buyers</div>
+          </div>
+
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 glow-card">
+            <div class="flex justify-between items-center text-xs text-slate-400 font-semibold uppercase">Avg Rating <span class="text-amber-400">★</span></div>
+            <div class="text-2xl font-extrabold text-white mt-2">` + kpis.overall_average_rating + ` ★</div>
+            <div class="mt-2 text-xs text-slate-400">From 3,500 ratings</div>
+          </div>
+
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 glow-card">
+            <div class="flex justify-between items-center text-xs text-slate-400 font-semibold uppercase">Rev / Cust <span class="text-emerald-400">👤</span></div>
+            <div class="text-2xl font-extrabold text-white mt-2">₹` + (kpis.revenue_per_customer / 1000).toFixed(1) + `k</div>
+            <div class="mt-2 text-xs text-slate-400">500 unique clients</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2 bg-[#111827] border border-slate-800 rounded-2xl p-6">
+            <div class="flex justify-between items-center mb-4">
+              <div>
+                <h2 class="text-base font-bold text-white">Monthly Gross Revenue & Order Count</h2>
+                <p class="text-xs text-slate-400">Performance trajectory across January to June 2025</p>
+              </div>
+              <div class="flex items-center gap-3 text-xs">
+                <span class="text-orange-400 flex items-center gap-1"><span class="w-3 h-3 bg-orange-500 rounded-sm inline-block"></span> Revenue (₹)</span>
+                <span class="text-blue-400 flex items-center gap-1"><span class="w-3 h-3 bg-blue-500 rounded-sm inline-block"></span> Orders</span>
+              </div>
+            </div>
+
+            <div class="h-64 w-full relative">
+              <canvas id="chart-monthly-overview"></canvas>
+            </div>
+          </div>
+
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <h2 class="text-base font-bold text-white">Revenue by Cuisine</h2>
+                <span class="text-xs font-mono text-orange-400">7 Cuisines</span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">Italian & North Indian generate >38% total revenue</p>
+
+              <div class="h-44 w-full relative">
+                <canvas id="chart-cuisine-doughnut"></canvas>
+              </div>
+            </div>
+
+            <div class="space-y-1.5 mt-2 pt-3 border-t border-slate-800 text-xs">
+              ` + topCuisinePills + `
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 glow-card">
+            <div class="text-xs text-slate-400 font-semibold uppercase">Top Partner Outlet</div>
+            <div class="text-lg font-bold text-white mt-1">` + kpis.top_restaurant.name + `</div>
+            <div class="text-xs text-orange-400">` + kpis.top_restaurant.cuisine + ` • ★ ` + kpis.top_restaurant.rating + `</div>
+            <div class="mt-3 pt-3 border-t border-slate-800 flex justify-between text-xs">
+              <span class="text-slate-400">Gross Volume</span>
+              <span class="font-bold text-emerald-400 font-mono">₹` + kpis.top_restaurant.revenue.toLocaleString() + `</span>
+            </div>
+          </div>
+
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 glow-card">
+            <div class="text-xs text-slate-400 font-semibold uppercase">Top Metro City</div>
+            <div class="text-lg font-bold text-white mt-1">` + kpis.top_city.name + `</div>
+            <div class="text-xs text-blue-400">` + kpis.top_city.customers + ` Customers (` + kpis.top_city.share + `% Share)</div>
+            <div class="mt-3 pt-3 border-t border-slate-800 flex justify-between text-xs">
+              <span class="text-slate-400">Total Spent</span>
+              <span class="font-bold text-emerald-400 font-mono">₹` + kpis.top_city.revenue.toLocaleString() + `</span>
+            </div>
+          </div>
+
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 glow-card">
+            <div class="text-xs text-slate-400 font-semibold uppercase">Peak Order Hour</div>
+            <div class="text-lg font-bold text-white mt-1">20:00 (8:00 PM)</div>
+            <div class="text-xs text-amber-400">379 orders • ₹308,648.96</div>
+            <div class="mt-3 pt-3 border-t border-slate-800 flex justify-between text-xs">
+              <span class="text-slate-400">Lunch Peak</span>
+              <span class="font-mono text-slate-300">11:00 AM (375 ords)</span>
+            </div>
+          </div>
+
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 glow-card">
+            <div class="text-xs text-slate-400 font-semibold uppercase">Peak Order Day</div>
+            <div class="text-lg font-bold text-white mt-1">Wednesday</div>
+            <div class="text-xs text-emerald-400">770 orders • ₹628,454.56</div>
+            <div class="mt-3 pt-3 border-t border-slate-800 flex justify-between text-xs">
+              <span class="text-slate-400">Day Share</span>
+              <span class="font-mono text-emerald-400 font-bold">15.34% of Total</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6">
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h2 class="text-base font-bold text-white">Top 5 Partner Outlets by Sales Volume</h2>
+              <p class="text-xs text-slate-400">Direct results from SQL View restaurant_analytics</p>
+            </div>
+            <button onclick="switchTab('restaurants')" class="text-xs font-semibold text-orange-400 hover:text-orange-300">View all 50 Outlets →</button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="border-b border-slate-800 text-slate-400 uppercase font-semibold">
+                  <th class="py-3 px-3">Rank</th>
+                  <th class="py-3 px-3">ID</th>
+                  <th class="py-3 px-3">Restaurant Name</th>
+                  <th class="py-3 px-3">Cuisine</th>
+                  <th class="py-3 px-3 text-right">Orders</th>
+                  <th class="py-3 px-3 text-right">Avg Rating</th>
+                  <th class="py-3 px-3 text-right">AOV (₹)</th>
+                  <th class="py-3 px-3 text-right">Total Revenue (₹)</th>
+                  <th class="py-3 px-3 text-right">Share</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 font-mono">
+                ` + topRestRows + `
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      setTimeout(() => {
+        initChart('chart-monthly-overview', {
+          type: 'bar',
+          data: {
+            labels: monthly.map(m => m.MonthName),
+            datasets: [
+              {
+                label: 'Gross Revenue (₹)',
+                data: monthly.map(m => m.revenue),
+                backgroundColor: '#F97316',
+                borderRadius: 4,
+                yAxisID: 'y'
+              },
+              {
+                label: 'Order Count',
+                data: monthly.map(m => m.orders),
+                backgroundColor: '#3B82F6',
+                borderRadius: 4,
+                yAxisID: 'y1'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { grid: { display: false }, ticks: { color: '#94A3B8' } },
+              y: {
+                type: 'linear',
+                position: 'left',
+                grid: { color: '#1F2937' },
+                ticks: { color: '#94A3B8', callback: (v) => '₹' + (v / 1000) + 'k' }
+              },
+              y1: {
+                type: 'linear',
+                position: 'right',
+                grid: { display: false },
+                ticks: { color: '#60A5FA' }
+              }
+            },
+            plugins: { legend: { display: false } }
+          }
+        });
+
+        initChart('chart-cuisine-doughnut', {
+          type: 'doughnut',
+          data: {
+            labels: cuisines.map(c => c.Cuisine),
+            datasets: [{
+              data: cuisines.map(c => c.revenue),
+              backgroundColor: cuisineColors,
+              borderWidth: 2,
+              borderColor: '#111827'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '60%',
+            plugins: { legend: { display: false } }
+          }
+        });
+      }, 50);
+    }
+
+    // 2. TRENDS TAB
+    function renderTrends(container) {
+      const monthly = DATA.monthly_performance;
+      const cumulative = DATA.daily_cumulative_sample || [];
+
+      let monthlyRows = monthly.map(m => {
+        let momBadge = m.growth_percentage === 0 ? '<span class="text-slate-400">Benchmark</span>' :
+          m.growth_percentage > 0 ? '<span class="text-emerald-400 font-bold">+' + m.growth_percentage + '%</span>' :
+          '<span class="text-rose-400 font-bold">' + m.growth_percentage + '%</span>';
+
+        return '<tr class="hover:bg-slate-900/60">' +
+          '<td class="py-3 px-3 font-sans font-semibold text-white">' + m.MonthName + ' 2025 <span class="text-slate-400 font-mono font-normal">(' + m.YearMonth + ')</span></td>' +
+          '<td class="py-3 px-3 text-right text-slate-300">' + m.orders.toLocaleString() + '</td>' +
+          '<td class="py-3 px-3 text-right font-bold text-emerald-400">₹' + m.revenue.toLocaleString() + '</td>' +
+          '<td class="py-3 px-3 text-right text-slate-300">₹' + m.aov.toFixed(2) + '</td>' +
+          '<td class="py-3 px-3 text-right">' + momBadge + '</td>' +
+          '<td class="py-3 px-3 text-right text-slate-400">' + ((m.revenue / 4097103.31) * 100).toFixed(2) + '%</td>' +
+        '</tr>';
+      }).join('');
+
+      container.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5">
+            <div class="text-xs font-semibold text-slate-400 uppercase">Peak Revenue Month</div>
+            <div class="text-xl font-bold text-white mt-2">May 2025</div>
+            <div class="text-xs text-emerald-400 font-mono mt-1 font-semibold">₹728,352.81 (+7.12% MoM)</div>
+          </div>
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5">
+            <div class="text-xs font-semibold text-slate-400 uppercase">Highest Ticket AOV</div>
+            <div class="text-xl font-bold text-white mt-2">January 2025</div>
+            <div class="text-xs text-orange-400 font-mono mt-1 font-semibold">₹841.12 Average Ticket</div>
+          </div>
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5">
+            <div class="text-xs font-semibold text-slate-400 uppercase">Monthly Run-Rate</div>
+            <div class="text-xl font-bold text-white mt-2">₹682,850.55</div>
+            <div class="text-xs text-blue-400 font-mono mt-1 font-semibold">833 Orders / Month</div>
+          </div>
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5">
+            <div class="text-xs font-semibold text-slate-400 uppercase">Cumulative H1 Gross</div>
+            <div class="text-xl font-bold text-white mt-2">₹4,097,103.31</div>
+            <div class="text-xs text-emerald-400 font-mono mt-1 font-semibold">100% Target Fulfilled</div>
+          </div>
+        </div>
+
+        <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6">
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h2 class="text-base font-bold text-white">Month-over-Month Growth % & Gross Revenue (₹)</h2>
+              <p class="text-xs text-slate-400">Replicating SQL CTE: LAG(total_revenue) OVER (ORDER BY order_year, order_month)</p>
+            </div>
+            <div class="flex items-center gap-3 text-xs">
+              <span class="text-orange-400">■ Revenue (₹)</span>
+              <span class="text-emerald-400 font-mono font-bold">● MoM Growth %</span>
+            </div>
+          </div>
+
+          <div class="h-72 w-full relative">
+            <canvas id="chart-growth-line"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6">
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h2 class="text-base font-bold text-white">Cumulative Sales Trajectory (Jan - Jun 2025)</h2>
+              <p class="text-xs text-slate-400">Replicating SQL Window Query 162: SUM(SUM(Amount)) OVER (ORDER BY DATE(OrderDate))</p>
+            </div>
+            <span class="text-xs font-mono text-emerald-400 font-semibold px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">Final: ₹4,097,103.31</span>
+          </div>
+
+          <div class="h-64 w-full relative">
+            <canvas id="chart-cumulative-area"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6">
+          <h2 class="text-base font-bold text-white mb-1">Monthly Performance Breakdown (View: monthly_performance)</h2>
+          <p class="text-xs text-slate-400 mb-4">Calculated via SQL CTE with previous_revenue and growth_percentage</p>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="border-b border-slate-800 text-slate-400 uppercase font-semibold">
+                  <th class="py-3 px-3">Period</th>
+                  <th class="py-3 px-3 text-right">Orders</th>
+                  <th class="py-3 px-3 text-right">Revenue (₹)</th>
+                  <th class="py-3 px-3 text-right">AOV (₹)</th>
+                  <th class="py-3 px-3 text-right">MoM Growth</th>
+                  <th class="py-3 px-3 text-right">Revenue Share</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 font-mono">
+                ` + monthlyRows + `
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      setTimeout(() => {
+        initChart('chart-growth-line', {
+          type: 'bar',
+          data: {
+            labels: monthly.map(m => m.MonthName),
+            datasets: [
+              {
+                type: 'bar',
+                label: 'Gross Revenue (₹)',
+                data: monthly.map(m => m.revenue),
+                backgroundColor: '#F97316',
+                borderRadius: 4,
+                yAxisID: 'y'
+              },
+              {
+                type: 'line',
+                label: 'MoM Growth %',
+                data: monthly.map(m => m.growth_percentage),
+                borderColor: '#10B981',
+                backgroundColor: '#10B981',
+                borderWidth: 3,
+                tension: 0.2,
+                yAxisID: 'y1'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { grid: { display: false }, ticks: { color: '#94A3B8' } },
+              y: {
+                type: 'linear',
+                position: 'left',
+                grid: { color: '#1F2937' },
+                ticks: { color: '#94A3B8', callback: (v) => '₹' + (v / 1000) + 'k' }
+              },
+              y1: {
+                type: 'linear',
+                position: 'right',
+                grid: { display: false },
+                ticks: { color: '#34D399', callback: (v) => v + '%' }
+              }
+            },
+            plugins: { legend: { display: false } }
+          }
+        });
+
+        initChart('chart-cumulative-area', {
+          type: 'line',
+          data: {
+            labels: cumulative.map(c => c.date.slice(5)),
+            datasets: [{
+              label: 'Cumulative Gross (₹)',
+              data: cumulative.map(c => c.cumulative_revenue),
+              borderColor: '#10B981',
+              backgroundColor: 'rgba(16, 185, 129, 0.15)',
+              fill: true,
+              tension: 0.3,
+              pointRadius: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { grid: { display: false }, ticks: { color: '#94A3B8', maxTicksLimit: 12 } },
+              y: {
+                grid: { color: '#1F2937' },
+                ticks: { color: '#94A3B8', callback: (v) => '₹' + (v / 1000000).toFixed(1) + 'M' }
+              }
+            },
+            plugins: { legend: { display: false } }
+          }
+        });
+      }, 50);
+    }
+
+    // 3. RESTAURANTS TAB
+    function renderRestaurants(container) {
+      const cuisines = DATA.cuisine_performance;
+      const allCuisines = ['ALL', ...cuisines.map(c => c.Cuisine)];
+      
+      const filtered = DATA.restaurants.filter(r => {
+        const matchesCuisine = currentCuisineFilter === 'ALL' || r.Cuisine === currentCuisineFilter;
+        const matchesSearch = !searchQuery ||
+          r.Name.toLowerCase().includes(searchQuery) ||
+          r.Cuisine.toLowerCase().includes(searchQuery) ||
+          String(r.RestaurantID).includes(searchQuery);
+        return matchesCuisine && matchesSearch;
+      }).sort((a, b) => {
+        let vA = a.total_revenue, vB = b.total_revenue;
+        if (sortColumn === 'orders') { vA = a.total_orders; vB = b.total_orders; }
+        else if (sortColumn === 'aov') { vA = a.average_order_value; vB = b.average_order_value; }
+        else if (sortColumn === 'rating') { vA = a.avg_rating; vB = b.avg_rating; }
+        else if (sortColumn === 'name') { return sortAsc ? a.Name.localeCompare(b.Name) : b.Name.localeCompare(a.Name); }
+        return sortAsc ? vA - vB : vB - vA;
+      });
+
+      let cuisinePills = allCuisines.map(c => {
+        let activeClass = currentCuisineFilter === c ? 'bg-orange-500 text-white font-bold' : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800';
+        return '<button onclick="setFilterCuisine(\'' + c + '\')" class="px-3 py-1 rounded-lg text-xs font-medium transition-all ' + activeClass + '">' + c + '</button>';
+      }).join('');
+
+      let restaurantRows = filtered.map(r => {
+        let tierBadge = r.total_revenue >= 100000 ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Top Tier</span>' :
+          '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-800 text-slate-400 border border-slate-700">Standard</span>';
+
+        return '<tr class="hover:bg-slate-900/60">' +
+          '<td class="py-3 px-3 font-bold text-orange-400">#' + r.revenue_rank + '</td>' +
+          '<td class="py-3 px-3 text-slate-400">#' + r.RestaurantID + '</td>' +
+          '<td class="py-3 px-3 font-sans font-semibold text-white">' + r.Name + '</td>' +
+          '<td class="py-3 px-3 font-sans"><span class="px-2 py-0.5 rounded-full text-[11px] bg-slate-800 text-slate-300 border border-slate-700">' + r.Cuisine + '</span></td>' +
+          '<td class="py-3 px-3 text-right text-slate-300">' + r.total_orders + '</td>' +
+          '<td class="py-3 px-3 text-right font-sans"><span class="px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-semibold">★ ' + r.avg_rating.toFixed(2) + '</span></td>' +
+          '<td class="py-3 px-3 text-right text-slate-300">₹' + r.average_order_value.toFixed(2) + '</td>' +
+          '<td class="py-3 px-3 text-right font-bold text-emerald-400">₹' + r.total_revenue.toLocaleString() + '</td>' +
+          '<td class="py-3 px-3 text-right text-slate-400">' + r.revenue_percentage + '%</td>' +
+          '<td class="py-3 px-3 text-center font-sans">' + tierBadge + '</td>' +
+        '</tr>';
+      }).join('');
+
+      container.innerHTML = `
+        <div class="flex items-center gap-1.5 flex-wrap bg-[#111827] border border-slate-800 p-4 rounded-2xl">
+          <span class="text-xs text-slate-400 mr-2">Filter Cuisine:</span>
+          ` + cuisinePills + `
+        </div>
+
+        <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+            <div>
+              <h2 class="text-base font-bold text-white">All 50 Partner Outlets Directory</h2>
+              <p class="text-xs text-slate-400">Showing ` + filtered.length + ` partner restaurants in fooddeliverydb</p>
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+              <span class="text-slate-400">Sort By:</span>
+              <select onchange="handleSortChange(this.value)" class="bg-slate-900 border border-slate-800 text-slate-200 px-2.5 py-1.5 rounded-lg text-xs focus:outline-none focus:border-orange-500">
+                <option value="revenue" ` + (sortColumn === 'revenue' ? 'selected' : '') + `>Revenue (₹)</option>
+                <option value="orders" ` + (sortColumn === 'orders' ? 'selected' : '') + `>Total Orders</option>
+                <option value="aov" ` + (sortColumn === 'aov' ? 'selected' : '') + `>Average Order Value</option>
+                <option value="rating" ` + (sortColumn === 'rating' ? 'selected' : '') + `>Customer Rating</option>
+                <option value="name" ` + (sortColumn === 'name' ? 'selected' : '') + `>Outlet Name</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto max-h-[600px]">
+            <table class="w-full text-left text-xs">
+              <thead class="sticky top-0 bg-[#111827] z-10">
+                <tr class="border-b border-slate-800 text-slate-400 uppercase font-semibold">
+                  <th class="py-3 px-3">Rank</th>
+                  <th class="py-3 px-3">ID</th>
+                  <th class="py-3 px-3">Restaurant Name</th>
+                  <th class="py-3 px-3">Cuisine</th>
+                  <th class="py-3 px-3 text-right">Orders</th>
+                  <th class="py-3 px-3 text-right">Rating</th>
+                  <th class="py-3 px-3 text-right">AOV (₹)</th>
+                  <th class="py-3 px-3 text-right">Total Revenue (₹)</th>
+                  <th class="py-3 px-3 text-right">Share</th>
+                  <th class="py-3 px-3 text-center">Tier</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 font-mono">
+                ` + restaurantRows + `
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function setFilterCuisine(c) {
+      currentCuisineFilter = c;
+      renderCurrentTab();
+    }
+
+    function handleSortChange(col) {
+      if (sortColumn === col) {
+        sortAsc = !sortAsc;
+      } else {
+        sortColumn = col;
+        sortAsc = false;
+      }
+      renderCurrentTab();
+    }
+
+    // 4. CUSTOMERS TAB
+    function renderCustomers(container) {
+      const segs = DATA.customer_segments_simple;
+      const rfm = DATA.customer_segments_rfm;
+      const cities = DATA.city_performance;
+      const topCust = DATA.top_customers;
+
+      let segCards = segs.map(s => {
+        return '<div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 glow-card">' +
+          '<div class="flex justify-between text-xs text-slate-400 font-semibold uppercase">' +
+            '<span>' + s.customer_segment + '</span>' +
+            '<span class="text-emerald-400">' + s.rev_share + '% Rev</span>' +
+          '</div>' +
+          '<div class="text-2xl font-extrabold text-white mt-2">' + s.customer_count + ' Users</div>' +
+          '<div class="text-xs text-slate-400 mt-1">₹' + s.total_revenue.toLocaleString() + ' Gross</div>' +
+          '<div class="mt-3 pt-3 border-t border-slate-800 flex justify-between text-xs text-slate-400">' +
+            '<span>Avg Spent</span>' +
+            '<span class="font-mono font-bold text-emerald-400">₹' + s.avg_spent.toLocaleString() + '</span>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+
+      let rfmRows = rfm.map(r => {
+        return '<div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">' +
+          '<div>' +
+            '<div class="flex items-center gap-2">' +
+              '<span class="text-sm font-bold text-white">' + r.rfm_segment + '</span>' +
+              '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300">' + r.customer_count + ' Users</span>' +
+            '</div>' +
+            '<div class="text-xs text-slate-400 mt-1">' +
+              'Avg Spent: <span class="font-mono text-slate-200">₹' + r.avg_spent.toLocaleString() + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="text-right">' +
+            '<div class="text-sm font-bold text-emerald-400 font-mono">₹' + r.total_revenue.toLocaleString() + '</div>' +
+            '<div class="text-xs text-slate-400 font-mono">' + r.rev_share + '% share</div>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+
+      let topCustRows = topCust.map((c, i) => {
+        return '<tr class="hover:bg-slate-900/60">' +
+          '<td class="py-3 px-3 font-bold text-orange-400">#' + (i + 1) + '</td>' +
+          '<td class="py-3 px-3 text-slate-400">CUST-' + c.CustomerID + '</td>' +
+          '<td class="py-3 px-3 font-sans font-semibold text-white">' + c.CustomerName + '</td>' +
+          '<td class="py-3 px-3 font-sans text-slate-300">' + c.City + '</td>' +
+          '<td class="py-3 px-3 text-slate-400">' + c.SignupDate + '</td>' +
+          '<td class="py-3 px-3 text-right text-slate-300 font-bold">' + c.orders + '</td>' +
+          '<td class="py-3 px-3 text-right text-slate-300">₹' + c.aov.toFixed(2) + '</td>' +
+          '<td class="py-3 px-3 text-right font-bold text-emerald-400">₹' + c.spent.toLocaleString() + '</td>' +
+          '<td class="py-3 px-3 text-center font-sans">' +
+            '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">' +
+              c.customer_segment +
+            '</span>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+
+      container.innerHTML = `
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          ` + segCards + `
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6">
+            <div class="flex justify-between items-center mb-4">
+              <div>
+                <h2 class="text-base font-bold text-white">RFM Multi-Tier Classification</h2>
+                <p class="text-xs text-slate-400">Scored via NTILE(5) on Recency, Frequency & Monetary</p>
+              </div>
+              <span class="text-xs font-mono text-orange-400">500 Profiles</span>
+            </div>
+
+            <div class="space-y-3">
+              ` + rfmRows + `
+            </div>
+          </div>
+
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6">
+            <div class="flex justify-between items-center mb-4">
+              <div>
+                <h2 class="text-base font-bold text-white">Metro Cities Delivery Sales</h2>
+                <p class="text-xs text-slate-400">Volume across all 5 operational city zones</p>
+              </div>
+              <span class="text-xs font-mono text-blue-400">5 Metros</span>
+            </div>
+
+            <div class="h-60 w-full relative">
+              <canvas id="chart-city-bars"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6">
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h2 class="text-base font-bold text-white">Top 25 Lifetime Value Customers</h2>
+              <p class="text-xs text-slate-400">Ranked using SQL: RANK() OVER (ORDER BY SUM(Amount) DESC)</p>
+            </div>
+            <span class="text-xs font-mono text-slate-400">Top 5% Buyers</span>
+          </div>
+
+          <div class="overflow-x-auto max-h-[450px]">
+            <table class="w-full text-left text-xs">
+              <thead class="sticky top-0 bg-[#111827] z-10">
+                <tr class="border-b border-slate-800 text-slate-400 uppercase font-semibold">
+                  <th class="py-3 px-3">Rank</th>
+                  <th class="py-3 px-3">ID</th>
+                  <th class="py-3 px-3">Name</th>
+                  <th class="py-3 px-3">City</th>
+                  <th class="py-3 px-3">Joined</th>
+                  <th class="py-3 px-3 text-right">Orders</th>
+                  <th class="py-3 px-3 text-right">AOV (₹)</th>
+                  <th class="py-3 px-3 text-right">Total Spent (₹)</th>
+                  <th class="py-3 px-3 text-center">Tier</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 font-mono">
+                ` + topCustRows + `
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      setTimeout(() => {
+        initChart('chart-city-bars', {
+          type: 'bar',
+          data: {
+            labels: cities.map(c => c.City),
+            datasets: [{
+              label: 'Gross Sales (₹)',
+              data: cities.map(c => c.total_revenue),
+              backgroundColor: ['#3B82F6', '#10B981', '#F97316', '#8B5CF6', '#EC4899'],
+              borderRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { grid: { display: false }, ticks: { color: '#94A3B8' } },
+              y: {
+                grid: { color: '#1F2937' },
+                ticks: { color: '#94A3B8', callback: (v) => '₹' + (v / 1000).toFixed(0) + 'k' }
+              }
+            },
+            plugins: { legend: { display: false } }
+          }
+        });
+      }, 50);
+    }
+
+    // 5. OPERATIONS TAB
+    function renderOperations(container) {
+      const dow = DATA.day_of_week;
+      const hourly = DATA.hourly_distribution;
+      const ratings = DATA.ratings_distribution;
+      const recent = DATA.recent_orders;
+
+      let ratingCards = ratings.map(r => {
+        return '<div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center">' +
+          '<div class="text-amber-400 font-bold text-sm">★ ' + r.bracket + '</div>' +
+          '<div class="text-xl font-extrabold text-white mt-2">' + r.count.toLocaleString() + '</div>' +
+          '<div class="text-xs text-slate-400 font-mono mt-0.5">' + r.percentage + '% of reviews</div>' +
+          '<div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mt-3">' +
+            '<div class="bg-amber-400 h-full rounded-full" style="width: ' + (r.percentage * 4) + '%"></div>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+
+      let recentOrderRows = recent.map(o => {
+        return '<tr class="hover:bg-slate-900/60">' +
+          '<td class="py-3 px-3 font-bold text-orange-400">#' + o.OrderID + '</td>' +
+          '<td class="py-3 px-3 text-slate-400">' + o.OrderDateStr + '</td>' +
+          '<td class="py-3 px-3 font-sans font-medium text-white">' + o.CustomerName + '</td>' +
+          '<td class="py-3 px-3 font-sans text-slate-300">' + o.City + '</td>' +
+          '<td class="py-3 px-3 font-sans text-slate-300">' + o.Name + '</td>' +
+          '<td class="py-3 px-3 font-sans"><span class="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300">' + o.Cuisine + '</span></td>' +
+          '<td class="py-3 px-3 text-right font-bold text-emerald-400">₹' + o.Amount.toFixed(2) + '</td>' +
+          '<td class="py-3 px-3 text-center font-sans"><span class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Delivered</span></td>' +
+        '</tr>';
+      }).join('');
+
+      container.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6">
+            <h2 class="text-base font-bold text-white mb-1">Day of the Week Ordering Trends</h2>
+            <p class="text-xs text-slate-400 mb-4">Order volume by weekday (Peak: Wednesday with 770 orders)</p>
+            <div class="h-64 w-full relative">
+              <canvas id="chart-dow-bar"></canvas>
+            </div>
+          </div>
+
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6">
+            <h2 class="text-base font-bold text-white mb-1">24-Hour Dispatch Rush Pattern</h2>
+            <p class="text-xs text-slate-400 mb-4">Replicating SQL: GROUP BY HOUR(OrderDate) (Peaks: 11:00 & 20:00)</p>
+            <div class="h-64 w-full relative">
+              <canvas id="chart-hourly-rush"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6">
+          <h2 class="text-base font-bold text-white mb-1">Customer Satisfaction Rating Brackets</h2>
+          <p class="text-xs text-slate-400 mb-4">3,500 total ratings (Benchmark: ★ 3.76 / 5.0)</p>
+          <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
+            ` + ratingCards + `
+          </div>
+        </div>
+
+        <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6">
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h2 class="text-base font-bold text-white">Real-Time Fulfilled Orders Log (Latest 30)</h2>
+              <p class="text-xs text-slate-400">Direct query join on orders_final, restaurants, and customers</p>
+            </div>
+            <span class="text-xs text-emerald-400 font-medium flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Delivered
+            </span>
+          </div>
+
+          <div class="overflow-x-auto max-h-96">
+            <table class="w-full text-left text-xs">
+              <thead class="sticky top-0 bg-[#111827] z-10">
+                <tr class="border-b border-slate-800 text-slate-400 uppercase font-semibold">
+                  <th class="py-3 px-3">Order ID</th>
+                  <th class="py-3 px-3">Timestamp</th>
+                  <th class="py-3 px-3">Customer</th>
+                  <th class="py-3 px-3">City</th>
+                  <th class="py-3 px-3">Restaurant</th>
+                  <th class="py-3 px-3">Cuisine</th>
+                  <th class="py-3 px-3 text-right">Amount (₹)</th>
+                  <th class="py-3 px-3 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 font-mono">
+                ` + recentOrderRows + `
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      setTimeout(() => {
+        initChart('chart-dow-bar', {
+          type: 'bar',
+          data: {
+            labels: dow.map(d => d.day.slice(0, 3)),
+            datasets: [{
+              label: 'Gross Revenue (₹)',
+              data: dow.map(d => d.revenue),
+              backgroundColor: '#F97316',
+              borderRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { grid: { display: false }, ticks: { color: '#94A3B8' } },
+              y: {
+                grid: { color: '#1F2937' },
+                ticks: { color: '#94A3B8', callback: (v) => '₹' + (v / 1000).toFixed(0) + 'k' }
+              }
+            },
+            plugins: { legend: { display: false } }
+          }
+        });
+
+        initChart('chart-hourly-rush', {
+          type: 'line',
+          data: {
+            labels: hourly.map(h => h.hour_label),
+            datasets: [{
+              label: 'Hourly Orders',
+              data: hourly.map(h => h.orders),
+              borderColor: '#3B82F6',
+              backgroundColor: 'rgba(59, 130, 246, 0.2)',
+              fill: true,
+              tension: 0.35,
+              pointRadius: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { grid: { display: false }, ticks: { color: '#94A3B8', maxTicksLimit: 8 } },
+              y: { grid: { color: '#1F2937' }, ticks: { color: '#94A3B8' } }
+            },
+            plugins: { legend: { display: false } }
+          }
+        });
+      }, 50);
+    }
+
+    // 6. SQL TAB
+    function renderSql(container) {
+      container.innerHTML = `
+        <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6">
+          <h2 class="text-base font-bold text-white mb-1">03_business_analysis.sql Source Mapping</h2>
+          <p class="text-xs text-slate-400">The exact MySQL 8.0 views, window functions, and CTEs that power the FOODPULSE dashboard</p>
+        </div>
+
+        <div class="space-y-4">
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5">
+            <div class="text-sm font-bold text-white mb-1">1. View: executive_kpis (Lines 837-851)</div>
+            <pre class="bg-[#090D16] p-4 rounded-xl text-xs font-mono text-emerald-400 overflow-x-auto leading-relaxed"><code>CREATE VIEW executive_kpis AS
+SELECT
+    COUNT(OrderID) AS total_orders,
+    COUNT(DISTINCT CustomerID) AS total_customers,
+    COUNT(DISTINCT RestaurantID) AS total_restaurants,
+    ROUND(SUM(Amount), 2) AS total_revenue,
+    ROUND(AVG(Amount), 2) AS average_order_value,
+    ROUND(MAX(Amount), 2) AS highest_order_value,
+    ROUND(
+        SUM(Amount) / NULLIF(COUNT(DISTINCT CustomerID), 0),
+        2
+    ) AS revenue_per_customer
+FROM orders_final;
+
+SELECT * FROM executive_kpis;</code></pre>
+          </div>
+
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5">
+            <div class="text-sm font-bold text-white mb-1">2. Monthly MoM Revenue Growth CTE (Lines 302-323)</div>
+            <pre class="bg-[#090D16] p-4 rounded-xl text-xs font-mono text-emerald-400 overflow-x-auto leading-relaxed"><code>WITH monthly_revenue AS (
+    SELECT
+        YEAR(OrderDate) AS order_year,
+        MONTH(OrderDate) AS order_month,
+        SUM(Amount) AS total_revenue
+    FROM orders_final
+    GROUP BY YEAR(OrderDate), MONTH(OrderDate)
+),
+revenue_with_previous AS (
+    SELECT
+        order_year,
+        order_month,
+        total_revenue,
+        LAG(total_revenue) OVER (
+            ORDER BY order_year, order_month
+        ) AS previous_revenue
+    FROM monthly_revenue
+)
+SELECT
+    order_year,
+    order_month,
+    ROUND(total_revenue, 2) AS total_revenue,
+    ROUND(previous_revenue, 2) AS previous_revenue,
+    ROUND(
+        (total_revenue - previous_revenue)
+        * 100.0 / NULLIF(previous_revenue, 0),
+        2
+    ) AS growth_percentage
+FROM revenue_with_previous
+ORDER BY order_year, order_month;</code></pre>
+          </div>
+
+          <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5">
+            <div class="text-sm font-bold text-white mb-1">3. RFM Customer Segmentation (Lines 447-478)</div>
+            <pre class="bg-[#090D16] p-4 rounded-xl text-xs font-mono text-emerald-400 overflow-x-auto leading-relaxed"><code>WITH customer_rfm AS (
+    SELECT
+        CustomerID,
+        DATEDIFF(
+            (SELECT MAX(OrderDate) FROM orders_final),
+            MAX(OrderDate)
+        ) AS recency_days,
+        COUNT(OrderID) AS frequency,
+        SUM(Amount) AS monetary
+    FROM orders_final
+    WHERE CustomerID IS NOT NULL
+    GROUP BY CustomerID
+),
+rfm_scores AS (
+    SELECT
+        CustomerID,
+        recency_days,
+        frequency,
+        monetary,
+        NTILE(5) OVER (ORDER BY recency_days ASC) AS R_score,
+        NTILE(5) OVER (ORDER BY frequency DESC) AS F_score,
+        NTILE(5) OVER (ORDER BY monetary DESC) AS M_score
+    FROM customer_rfm
+)
+SELECT
+    CustomerID,
+    recency_days,
+    frequency,
+    ROUND(monetary, 2) AS monetary,
+    R_score,
+    F_score,
+    M_score,
+    CASE
+        WHEN R_score >= 4 AND F_score >= 4 AND M_score >= 4
+            THEN 'High Value'
+        WHEN R_score >= 3 AND F_score >= 3
+            THEN 'Loyal'
+        WHEN R_score >= 3
+            THEN 'Potential'
+        WHEN R_score <= 2 AND F_score <= 2
+            THEN 'At Risk'
+        ELSE 'Regular'
+    END AS customer_segment
+FROM rfm_scores
+ORDER BY M_score DESC;</code></pre>
+          </div>
+        </div>
+      `;
+    }
+
+    // Initialize
+    switchTab('overview');
+  </script>
+</body>
+</html>
