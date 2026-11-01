@@ -12,41 +12,50 @@ It aims to support data-driven decision-making by presenting key business metric
     https://food-delivery-intelligence-platform-kjzyzljw2-sathana-jr.vercel.app/
 
 ## Key Features
+
 **01. Business Overview**
 - Track overall business performance.
 - Monitor revenue, orders, and customer metrics.
 - View important business KPIs.
+  
 **02. Customer Analytics**
 - Analyze customer purchasing behavior.
 - Explore customer activity and order patterns.
 - Understand customer contribution to business performance.
+  
 **03. Restaurant Analytics**
 - Evaluate restaurant-level performance.
 - Analyze order distribution.
 - Compare restaurant business performance.
+  
 **04. Revenue & Trend Analysis**
 - Examine revenue patterns.
 - Identify business trends.
 - Explore order and revenue movements.
+  
 **05. Operations Analytics**
 - Understand order performance.
 - Analyze operational patterns.
 - Explore business performance indicators.
+  
 **06. SQL Explorer**
 - Explore SQL business analysis.
 - Understand analytical queries.
 - Connect query results with business insights.
 
 ## Technology Stack
+
 **Frontend**
 - React.js
 - JavaScript
 - Tailwind CSS
 - Vite
+
 **Data Analysis**
 - Python
 - SQL
 - MySQL
+
 **Development & Deployment**
 - Visual Studio Code
 - Git
@@ -54,7 +63,9 @@ It aims to support data-driven decision-making by presenting key business metric
 - Vercel
 
 ## Business Metrics
+
 The platform focuses on the following business indicators:
+
 - Total Revenue
 - Total Orders
 - Total Customers
@@ -64,6 +75,7 @@ The platform focuses on the following business indicators:
 - Operational Insights
 
 ## Project Architecture
+
 Raw Food Delivery Data
           |
           v
@@ -82,6 +94,7 @@ Raw Food Delivery Data
    Business Insights
 
 ## Project Structure
+
 Food-Delivery-Intelligence-Platform/
 |
 |-- Datasets/
@@ -109,17 +122,23 @@ Food-Delivery-Intelligence-Platform/
 |-- README.md
 
 ## Installation & Setup
+
 **Step 1: Clone the repository**
 git clone https://github.com/Sathana0511/Food-Delivery-Intelligence-Platform.git
+
 **Step 2: Navigate to the dashboard directory**
 cd Food-Delivery-Intelligence-Platform/foodpulse-dashboard
+
 **Step 3: Install dependencies**
 npm install
+
 **Step 4: Start the development server**
 npm run dev
+
 Open the local URL displayed in the terminal to access FoodPulse.
 
 ## Future Enhancements
+
 - Machine Learning-based demand forecasting.
 - Customer segmentation and retention prediction.
 - Restaurant recommendation system.
@@ -127,6 +146,7 @@ Open the local URL displayed in the terminal to access FoodPulse.
 - Advanced predictive business intelligence.
 
 ## Project Objective
+
 To demonstrate the integration of SQL-based business analysis, Python, and modern frontend technologies in building an interactive analytics platform for the food delivery industry.
 
 ## Author
@@ -135,4 +155,5 @@ Computer Science (AIML)
 https://github.com/Sathana0511
 
 **FoodPulse – Turning Food Delivery Data into Business Intelligence.**
+
 ⭐ If you find this project interesting, feel free to star the repository!
