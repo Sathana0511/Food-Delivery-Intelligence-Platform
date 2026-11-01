@@ -76,13 +76,14 @@ The platform focuses on the following business indicators:
 
 ## Project Architecture
 
+```text
 Raw Food Delivery Data
           |
           v
      SQL Database
           |
           v
-   SQL Business Analysis
+  SQL Business Analysis
           |
           v
     Processed Data
@@ -92,9 +93,12 @@ Raw Food Delivery Data
           |
           v
    Business Insights
+```
+
 
 ## Project Structure
 
+```text
 Food-Delivery-Intelligence-Platform/
 |
 |-- Datasets/
@@ -120,6 +124,7 @@ Food-Delivery-Intelligence-Platform/
 |-- foodpulse_analytics_report.md
 |-- foodpulse_dashboard.html
 |-- README.md
+```
 
 ## Installation & Setup
 
